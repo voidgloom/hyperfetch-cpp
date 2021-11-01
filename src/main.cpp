@@ -10,7 +10,6 @@
 #include "ascii.hpp"
 
 int asciiWidth;
-int asciiHeight;
 
 int main() {
   const char* infoChar = std::getenv("HF_INFO");
@@ -19,6 +18,9 @@ int main() {
   AsciiArt ascii;
   ascii.print();
 
+  asciiWidth = ascii.width;
+  // return to top
+  std::cout << "\033[" << ascii.height << "A";
 
   if (infoChar != NULL) {
     info = infoChar;
@@ -60,9 +62,14 @@ int main() {
     }
   }
 
+  int info_amount;
   for (HyperfetchModule m : module_list) {
     m.print();
+    info_amount++;
   }
+
+  if (ascii.height != 0)
+    std::cout << "\033[" << ascii.height - info_amount << "B";
 
   return 0;
 }
