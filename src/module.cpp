@@ -2,5 +2,11 @@
 #include <iostream>
 
 void HyperfetchModule::print() {
-  std::cout << prefix << ": " << content << std::endl;
+  std::string seperator;
+  if(noSeperator)
+    seperator = "";
+  else
+    seperator = ": ";
+
+  std::cout << prefix << seperator << content << std::endl;
 }

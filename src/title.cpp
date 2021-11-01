@@ -8,6 +8,7 @@ void TitleModule::print() {
 
 void TitleModule::fetch() {
   std::string username = std::getenv("USER");
+  noSeperator = true;
   utsname unameResult;
   uname(&unameResult);
   content = username + "@" + unameResult.nodename;
