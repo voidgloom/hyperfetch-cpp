@@ -6,6 +6,7 @@
 #include "shell.hpp"
 #include "model.hpp"
 #include "title.hpp"
+#include "distro.hpp"
 
 int main() {
   const char* infoChar = std::getenv("HF_INFO");
@@ -14,7 +15,7 @@ int main() {
   if (infoChar != NULL) {
     info = infoChar;
   } else {
-    info = "title kernel shell model";
+    info = "title distro kernel shell model";
   }
 
   std::list<HyperfetchModule> module_list;
@@ -41,6 +42,10 @@ int main() {
       module_list.push_back(module);
     } else if (word == "model") {
       ModelModule module;
+      module.fetch();
+      module_list.push_back(module);
+    } else if (word == "distro") {
+      DistroModule module;
       module.fetch();
       module_list.push_back(module);
     }
