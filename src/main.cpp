@@ -1,4 +1,3 @@
-#include <thread>
 #include <sstream>
 #include <iostream>
 #include <list>
@@ -8,6 +7,7 @@
 #include "title.hpp"
 #include "distro.hpp"
 #include "ascii.hpp"
+#include "uptime.hpp"
 
 int asciiWidth;
 
@@ -25,7 +25,7 @@ int main() {
   if (infoChar != NULL) {
     info = infoChar;
   } else {
-    info = "title distro kernel shell model";
+    info = "title distro kernel shell model uptime";
   }
 
   std::list<HyperfetchModule> module_list;
@@ -58,11 +58,15 @@ int main() {
       DistroModule module;
       module.fetch();
       module_list.push_back(module);
+    } else if (word == "uptime") {
+      UptimeModule module;
+      module.fetch();
+      module_list.push_back(module);
     }
     }
   }
 
-  int info_amount;
+  int info_amount = 0;
   for (HyperfetchModule m : module_list) {
     m.print();
     info_amount++;
