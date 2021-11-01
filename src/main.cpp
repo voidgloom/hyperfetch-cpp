@@ -8,6 +8,7 @@
 #include "distro.hpp"
 #include "ascii.hpp"
 #include "uptime.hpp"
+#include "wm.hpp"
 
 int asciiWidth;
 
@@ -25,7 +26,7 @@ int main() {
   if (infoChar != NULL) {
     info = infoChar;
   } else {
-    info = "title distro kernel shell model uptime";
+    info = "title distro kernel shell model uptime wm";
   }
 
   std::list<HyperfetchModule> module_list;
@@ -60,6 +61,10 @@ int main() {
       module_list.push_back(module);
     } else if (word == "uptime") {
       UptimeModule module;
+      module.fetch();
+      module_list.push_back(module);
+    } else if (word == "wm") {
+      WmModule module;
       module.fetch();
       module_list.push_back(module);
     }
