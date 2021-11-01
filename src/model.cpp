@@ -12,9 +12,17 @@ void ModelModule::fetch() {
   rewind(f);
   fgets(product_name, f_size, f);
 
-  char *ptnewline = strstr(product_name, "\n");
-  if (ptnewline != NULL)
-    strncpy(ptnewline, "\0", 1);
+  std::string finalValue = "";
+  int i = 0;
+  while (product_name[i] != '\0') {
+    switch (product_name[i]) {
+      case '\n':
+        break;
+      default:
+        finalValue += product_name[i];
+    }
+    i++;
+  }
 
   fclose(f);
   f = fopen("/sys/devices/virtual/dmi/id/product_version", "r");
@@ -24,16 +32,23 @@ void ModelModule::fetch() {
   char *product_version = new char[f_size];
 
   rewind(f);
-  fgets(product_name, f_size, f);
+  fgets(product_version, f_size, f);
 
-  ptnewline = strstr(product_version, "\n");
-  if (ptnewline != NULL)
-    strncpy(ptnewline, "\0", 1);
-
+  // add a space
+  finalValue += " ";
+  i = 0;
+  while (product_version[i] != '\0') {
+    switch (product_version[i]) {
+      case '\n':
+        break;
+      default:
+        finalValue += product_version[i];
+    }
+    i++;
+  }
 
   prefix = "Device";
-  content = product_name;
-  content += product_version;
+  content = finalValue;
 
   delete[] product_name;
   delete[] product_version;
