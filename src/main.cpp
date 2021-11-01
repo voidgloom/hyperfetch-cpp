@@ -7,10 +7,18 @@
 #include "model.hpp"
 #include "title.hpp"
 #include "distro.hpp"
+#include "ascii.hpp"
+
+int asciiWidth;
+int asciiHeight;
 
 int main() {
   const char* infoChar = std::getenv("HF_INFO");
   std::string info;
+
+  AsciiArt ascii;
+  ascii.print();
+
 
   if (infoChar != NULL) {
     info = infoChar;
