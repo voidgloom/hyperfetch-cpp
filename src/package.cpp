@@ -48,25 +48,9 @@ void PackageModule::fetch() {
     int i = 1;
     for (it = packageMap.begin(); it != packageMap.end(); it++) {
         if (i == elements) {
-            std::stringstream stream;
-            std::string a = " (";
-            a += it->first;
-            a += ")";
-            stream << it->second;
-            std::string s;
-            stream >> s;
-            content += s;
-            content += a;
+            content = std::to_string(it->second) + " (" + it->first + ")";
         } else {
-            std::stringstream stream;
-            std::string a = " (";
-            a += it->first;
-            a += "), ";
-            stream << it->second;
-            std::string s;
-            stream >> s;
-            content += s;
-            content += a;
+            content = std::to_string(it->second) + " (" + it->first + "), ";
         }
         i++;
     }

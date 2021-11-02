@@ -5,21 +5,12 @@
 
 void UptimeModule::fetch() {
     struct sysinfo info;
-    std::string up_hours;
-    std::string up_minutes;
-
     sysinfo(&info);
     int uptime_hours = info.uptime / 3600;
     int uptime_minutes = info.uptime % 3600 / 60;
 
-
-    std::stringstream stream_hours;
-    stream_hours << uptime_hours;
-    stream_hours >> up_hours;
-
-    std::stringstream stream_minutes;
-    stream_minutes << uptime_minutes;
-    stream_minutes >> up_minutes;
+    std::string up_hours = std::to_string(uptime_hours);
+    std::string up_minutes = std::to_string(uptime_minutes);
 
     if (uptime_hours != 0)
         content = up_hours + " hours, " + up_minutes + " minutes";
