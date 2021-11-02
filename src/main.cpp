@@ -11,10 +11,17 @@
 #include "wm.hpp"
 
 int asciiWidth;
+int longestPrefix;
+std::string prefixMode;
 
 int main() {
   const char* infoChar = std::getenv("HF_INFO");
   std::string info;
+
+  const char* prefixModeChar = std::getenv("HF_PREFIX_STYLE");
+  if (prefixModeChar != NULL) {
+    prefixMode = prefixModeChar;
+  }
 
   AsciiArt ascii;
   ascii.print();
@@ -41,30 +48,37 @@ int main() {
     word = newWord;
     if (word == "title") {
       TitleModule module;
+      if (longestPrefix < 0) longestPrefix = 0;
       module.fetch();
       module_list.push_back(module);
     } else if (word == "kernel") {
       KernelModule module;
+      if (longestPrefix < 6) longestPrefix = 6;
       module.fetch();
       module_list.push_back(module);
     } else if (word == "shell") {
       ShellModule module;
+      if (longestPrefix < 5) longestPrefix = 5;
       module.fetch();
       module_list.push_back(module);
     } else if (word == "model") {
       ModelModule module;
+      if (longestPrefix < 5) longestPrefix = 5;
       module.fetch();
       module_list.push_back(module);
     } else if (word == "distro") {
       DistroModule module;
+      if (longestPrefix < 2) longestPrefix = 2;
       module.fetch();
       module_list.push_back(module);
     } else if (word == "uptime") {
       UptimeModule module;
+      if (longestPrefix < 6) longestPrefix = 6;
       module.fetch();
       module_list.push_back(module);
     } else if (word == "wm") {
       WmModule module;
+      if (longestPrefix < 2) longestPrefix = 2;
       module.fetch();
       module_list.push_back(module);
     }
