@@ -10,6 +10,7 @@
 #include "uptime.hpp"
 #include "wm.hpp"
 #include "package.hpp"
+#include "cpu.hpp"
 
 int asciiWidth;
 int longestPrefix;
@@ -34,7 +35,7 @@ int main() {
   if (infoChar != NULL) {
     info = infoChar;
   } else {
-    info = "title distro kernel shell model uptime wm pkgs";
+    info = "title distro kernel shell model uptime wm pkgs cpu";
   }
 
   std::list<HyperfetchModule> module_list;
@@ -85,6 +86,11 @@ int main() {
     } else if (word == "pkgs") {
       PackageModule module;
       if (longestPrefix < 4) longestPrefix = 4;
+      module.fetch();
+      module_list.push_back(module);
+    } else if (word == "cpu") {
+      CpuModule module;
+      if (longestPrefix < 3) longestPrefix = 3;
       module.fetch();
       module_list.push_back(module);
     }
