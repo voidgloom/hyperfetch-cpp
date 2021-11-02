@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <map>
 #include <sstream>
+#include <iostream>
 
 void PackageModule::fetch() {
     std::map<std::string, int> packageMap;
@@ -48,9 +49,9 @@ void PackageModule::fetch() {
     int i = 1;
     for (it = packageMap.begin(); it != packageMap.end(); it++) {
         if (i == elements) {
-            content = std::to_string(it->second) + " (" + it->first + ")";
+            content += std::to_string(it->second) + " (" + it->first + ")";
         } else {
-            content = std::to_string(it->second) + " (" + it->first + "), ";
+            content += std::to_string(it->second) + " (" + it->first + "), ";
         }
         i++;
     }
