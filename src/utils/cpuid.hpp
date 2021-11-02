@@ -4,8 +4,9 @@
 
 class CpuInfo {
     private:
+        bool isPartial = false;
         std::map<std::string, std::string> map;
     public:
-        CpuInfo();
+        CpuInfo(bool partial);
         std::string getValue(std::string key);
 };
