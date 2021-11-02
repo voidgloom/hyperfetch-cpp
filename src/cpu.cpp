@@ -7,7 +7,7 @@
 
 void CpuModule::fetch() {
     CpuInfo cpu(true);
-    // check for cached cpu model name
+    // check for cached cpu model name and read it if it exists
     std::string cache_path = "/run/user/";
     std::string userid;
     std::stringstream stream;
@@ -20,6 +20,8 @@ void CpuModule::fetch() {
         cpuModelName = new char[1024];
         fgets(cpuModelName, 1024, f);
     }
+    // set content to cached cpu model name if it exists
+    // if it doesn't parse /proc/cpuinfo and write the result into the cache
     if (cpuModelName != NULL) {
         content = cpuModelName;
     } else {
