@@ -47,7 +47,7 @@ void PackageModule::fetch() {
     }
     int i = 1;
     for (it = packageMap.begin(); it != packageMap.end(); it++) {
-        if (i == elements || elements == 1) {
+        if (i == elements) {
             std::stringstream stream;
             std::string a = " (";
             a += it->first;
