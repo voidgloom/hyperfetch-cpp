@@ -1,9 +1,6 @@
 #include "ram.hpp"
 #include "utils/trim.hpp"
 #include <cstring>
-#include <sys/sysinfo.h>
-#include <sstream>
-#include <iostream>
 
 void RamModule::fetch() {
     FILE *f = fopen("/proc/meminfo", "r");

@@ -2,8 +2,6 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <map>
-#include <sstream>
-#include <iostream>
 
 void PackageModule::fetch() {
     std::map<std::string, int> packageMap;

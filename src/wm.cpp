@@ -5,10 +5,6 @@
 #include <cstring>
 #include <list>
 #include "wmList.hpp"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
 
 void WmModule::fetch() {
     std::list<std::string> processNames;

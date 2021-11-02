@@ -1,6 +1,5 @@
 #include "cpu.hpp"
 #include "utils/cpuid.hpp"
-#include <sstream>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>

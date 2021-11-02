@@ -1,21 +1,6 @@
 #include "cpuid.hpp"
+#include "trim.hpp"
 #include <cstring>
-#include <iostream>
-#include <algorithm>
-#include <cctype>
-#include <locale>
-
-void rtrim(std::string &s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
-}
-
-void ltrim(std::string &s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }));
-}
 
 CpuInfo::CpuInfo(bool partial) {
     if (partial) {
@@ -30,7 +15,7 @@ CpuInfo::CpuInfo(bool partial) {
             // key
             token = strtok(currentLine, ":");
             std::string key = token;
-            rtrim(key);
+            ralsei::rtrim(key);
             // value
             token = strtok(NULL, ":");
             std::string value;
@@ -38,8 +23,8 @@ CpuInfo::CpuInfo(bool partial) {
                 value = token;
             else
                 value = "";
-            ltrim(value);
-            rtrim(value);
+            ralsei::ltrim(value);
+            ralsei::rtrim(value);
             if (!key.empty())
                 map.insert(std::pair<std::string, std::string>(key, value));
         }
@@ -58,7 +43,7 @@ std::string CpuInfo::getValue(std::string key)  {
             // key
             token = strtok(currentLine, ":");
             std::string getKey = token;
-            rtrim(getKey);
+            ralsei::rtrim(getKey);
             if (key != getKey) {
                 continue;
             }
@@ -69,8 +54,8 @@ std::string CpuInfo::getValue(std::string key)  {
                 value = token;
             else
                 value = "";
-            ltrim(value);
-            rtrim(value);
+            ralsei::ltrim(value);
+            ralsei::rtrim(value);
             if (!getKey.empty() && map.count(getKey) == 0 )
                 map.insert(std::pair<std::string, std::string>(getKey, value));
             else {
