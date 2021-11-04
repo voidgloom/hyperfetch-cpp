@@ -32,43 +32,51 @@ void AsciiArt::print() {
         asciiLogo = asciiArtEnv;
     } else {
          OSReleaseParser parser;
-        asciiLogo = parser.getValue("ID");
-
+         asciiLogo = parser.getValue("ID");
     }
+
+    std::string asciiArtColor = "";
+    const char *artColorEnv = std::getenv("HF_ASCII_COLOR");
+    if (artColorEnv != NULL) {
+        asciiArtColor = artColorEnv;
+    }
+
 
     std::string logo;
 
     if (asciiLogo == "arch") {
         std::string asciiFormat;
-
+        if (artColorEnv == NULL) {
+            asciiArtColor = "\033[38;5;6m";
+        }
         if (smallLogoStr != "1") {
             logo =
-                "               -@\n"
-                "              .##@\n"
-                "             .####@\n"
-                "             @#####@\n"
-                "           . *######@\n"
-                "          .##@o@#####@\n"
-                "         /############@\n"
-                "        /##############@\n"
-                "       @######@**%######@\n"
-                "      @######`     %#####o\n"
-                "     @######@       ######%\n"
-                "   -@#######h       ######@.`\n"
-                "  /#####h**``       `**%@####@\n"
-                " @H@*`                    `*%#@\n"
-                "*`                            `*";
+              asciiArtColor +     "               -@\n"
+               + asciiArtColor +  "              .##@\n"
+               + asciiArtColor +  "             .####@\n"
+               + asciiArtColor +  "             @#####@\n"
+               + asciiArtColor +  "           . *######@\n"
+               + asciiArtColor +  "          .##@o@#####@\n"
+               + asciiArtColor +  "         /############@\n"
+               + asciiArtColor +  "        /##############@\n"
+               + asciiArtColor +  "       @######@**%######@\n"
+               + asciiArtColor +  "      @######`     %#####o\n"
+               + asciiArtColor +  "     @######@       ######%\n"
+               + asciiArtColor +  "   -@#######h       ######@.`\n"
+               + asciiArtColor + "  /#####h**``       `**%@####@\n"
+               + asciiArtColor + " @H@*`                    `*%#@\n"
+               + asciiArtColor +  "*`                            `*\033[0m";
             width = 34;
             height = 15;
         } else {
             logo =
-                "       /\\\n"
-				"      /  \\\n"
-				"     /\\   \\\n"
-				"    /      \\\n"
-				"   /   ,,   \\\n"
-				"  /   |  |  -\\\n"
-				" /_-''    ''-_\\";
+             asciiArtColor +    "       /\\\n"
+			 + asciiArtColor +  "      /  \\\n"
+			 + asciiArtColor +  "     /\\   \\\n"
+			 + asciiArtColor +  "    /      \\\n"
+			 + asciiArtColor +  "   /   ,,   \\\n"
+			 + asciiArtColor +  "  /   |  |  -\\\n"
+			 + asciiArtColor +  " /_-''    ''-_\\\033[0m";
             width = 16;
             height = 7;
         }
