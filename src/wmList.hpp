@@ -28,4 +28,6 @@ const std::map<std::string, std::string> wmList = {
                     {"fireplace", "fireplace"},
                     {"mazecompositor", "mazecompositor"},
                     {"way-cooler", "way-cooler"},
+                    {"ratpoison", "ratpoison"},
+
 };
