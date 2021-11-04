@@ -98,12 +98,22 @@ int main() {
     } else if (word == "mem") {
       RamModule module;
       if (longestPrefix < 6) longestPrefix = 6;
-      module.fetch();
+      module.fetch(false);
       module_list.push_back(module);
     } else if (word == "disk") {
       DiskModule module;
       if (longestPrefix < 8) longestPrefix = 8;
-      module.fetch();
+      module.fetch(false);
+      module_list.push_back(module);
+    } else if (word == "disk_bar") {
+      DiskModule module;
+      if (longestPrefix < 8) longestPrefix = 8;
+      module.fetch(true);
+      module_list.push_back(module);
+    } else if (word == "mem_bar") {
+      RamModule module;
+      if (longestPrefix < 6) longestPrefix = 6;
+      module.fetch(true);
       module_list.push_back(module);
     }
     }

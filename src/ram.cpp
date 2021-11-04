@@ -1,8 +1,10 @@
 #include "ram.hpp"
 #include "utils/trim.hpp"
+#include "utils/bar.hpp"
 #include <cstring>
+#include <cmath>
 
-void RamModule::fetch() {
+void RamModule::fetch(bool bar) {
     FILE *f = fopen("/proc/meminfo", "r");
     char *cacheMemChar = new char[1024];
     int totalMemNum;
@@ -48,6 +50,11 @@ void RamModule::fetch() {
     int ncbrcUsedMem = totalMemNum - freeMem - bufferMem - cacheMem - sReclaimable;
 
     delete[] cacheMemChar;
-    content = std::to_string(ncbrcUsedMem) + "M / " + std::to_string(totalMemNum) + "M";
+    if (!bar) {
+        content = std::to_string(ncbrcUsedMem) + "M / " + std::to_string(totalMemNum) + "M";
+    } else {
+        double memPercent = (double) ncbrcUsedMem / (double) totalMemNum * 100.0;
+        content = ralsei::bar(15, lround(memPercent));
+    }
     prefix = "Memory";
 }

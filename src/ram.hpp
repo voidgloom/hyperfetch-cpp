@@ -2,5 +2,5 @@
 
 class RamModule : public HyperfetchModule {
     public:
-        void fetch();
+        void fetch(bool bar);
 };
