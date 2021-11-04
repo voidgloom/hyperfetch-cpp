@@ -12,6 +12,7 @@
 #include "package.hpp"
 #include "cpu.hpp"
 #include "ram.hpp"
+#include "disk.hpp"
 
 int asciiWidth;
 int longestPrefix;
@@ -36,7 +37,7 @@ int main() {
   if (infoChar != NULL) {
     info = infoChar;
   } else {
-    info = "title distro kernel shell model uptime wm pkgs cpu mem";
+    info = "title distro kernel shell model uptime wm pkgs cpu mem disk";
   }
 
   std::list<HyperfetchModule> module_list;
@@ -99,8 +100,12 @@ int main() {
       if (longestPrefix < 6) longestPrefix = 6;
       module.fetch();
       module_list.push_back(module);
+    } else if (word == "disk") {
+      DiskModule module;
+      if (longestPrefix < 8) longestPrefix = 8;
+      module.fetch();
+      module_list.push_back(module);
     }
-
     }
   }
 
