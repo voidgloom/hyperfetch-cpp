@@ -6,6 +6,12 @@ extern int longestPrefix;
 extern std::string prefixMode;
 
 void HyperfetchModule::print() {
+  std::string prefixFormat;
+  const char *prefixFormatEnv = std::getenv("HF_PREFIX_FORMAT");
+  if (prefixFormatEnv != NULL)
+    prefixFormat = prefixFormatEnv;
+  else
+    prefixFormat = "\033[1;38;5;5m";
   std::string seperator;
   if(noSeperator || prefixMode == "pfetch")
     seperator = "";
@@ -24,8 +30,8 @@ void HyperfetchModule::print() {
       prefix += " ";
       i--;
     }
-    std::cout << "\033[" << asciiWidth << "C" << prefix << content << std::endl;
+    std::cout << "\033[" << asciiWidth << "C" << prefixFormat << prefix << "\033[0m" << content << std::endl;
   } else {
-    std::cout << "\033[" << asciiWidth << "C" << prefix << seperator << content << std::endl;
+    std::cout << "\033[" << asciiWidth << "C" << prefixFormat << prefix << "\033[0m" << seperator << content << std::endl;
   }
 }
