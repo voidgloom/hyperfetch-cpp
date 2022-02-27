@@ -1,9 +1,16 @@
 #include "osrelease.hpp"
 #include <cstring>
+#include <filesystem>
 #include <iostream>
 
 OSReleaseParser::OSReleaseParser() {
-    FILE *f = fopen("/etc/os-release", "r");
+    FILE *f;
+    if (std::filesystem::exists("/bedrock/etc/os-release")) {
+       f = fopen("/bedrock/etc/os-release", "r");
+    }
+    else {
+       f = fopen("/etc/os-release", "r");
+    }
     fseek(f, 0, SEEK_END);
     size_t f_size = ftell(f);
 
