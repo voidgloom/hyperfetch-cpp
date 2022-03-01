@@ -1,12 +1,55 @@
 #include "package.hpp"
 #include <dirent.h>
+#include <string.h>
+#include <iostream>
 #include <unistd.h>
 #include <map>
 
 void PackageModule::fetch() {
     std::map<std::string, int> packageMap;
     FILE *f;
-    if((f = fopen("/usr/bin/pacman", "r"))) {
+
+    if((f = popen("pacman -Q", "r"))) {
+        int count = 0;
+        char *content = (char *) malloc(256);
+        while (fgets(content, 256, f)) {
+            count++;
+        }
+        pclose(f);
+        packageMap.insert(std::pair<std::string,int>("pacman", count));
+    }
+
+    if((f = popen("rpm -qa", "r"))) {
+        int count = 0;
+        char *content = (char *) malloc(256);
+        while (fgets(content, 256, f)) {
+            count++;
+        }
+        pclose(f);
+        packageMap.insert(std::pair<std::string,int>("rpm", count));
+    }
+
+    if((f = popen("flatpak list", "r"))) {
+        int count = 0;
+        char *content = (char *) malloc(256);
+        while (fgets(content, 256, f)) {
+            count++;
+        }
+        pclose(f);
+        packageMap.insert(std::pair<std::string,int>("flatpak", count - 1));
+    }
+
+    if((f = popen("apk info", "r"))) {
+        int count = 0;
+        char *content = (char *) malloc(256);
+        while (fgets(content, 256, f)) {
+            count++;
+        }
+        pclose(f);
+        packageMap.insert(std::pair<std::string,int>("apk", count));
+    }
+    // potential fast path for pacman
+    /*if((f = fopen("/usr/bin/pacman", "r"))) {
        fclose(f);
        struct dirent *files;
        int pacmanPkgs = 0;
@@ -18,8 +61,10 @@ void PackageModule::fetch() {
            pacmanPkgs -= 3;
            packageMap.insert(std::pair<std::string,int>("pacman", pacmanPkgs));
        }
-    }
-    if((f = fopen("/usr/bin/flatpak", "r"))) {
+    }*/
+
+    // potential fast path for flatpak
+    /*if((f = fopen("/usr/bin/flatpak", "r"))) {
        fclose(f);
        struct dirent *files;
        int fpPkgs = 0;
@@ -35,7 +80,7 @@ void PackageModule::fetch() {
            fpPkgs -= 4;
            packageMap.insert(std::pair<std::string,int>("flatpak", fpPkgs));
        }
-    }
+    }*/
 
     // iterate over packageMap and it to the modules content
     std::map<std::string, int>::iterator it;
