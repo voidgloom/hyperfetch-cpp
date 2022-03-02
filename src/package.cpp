@@ -1,7 +1,6 @@
 #include "package.hpp"
 #include <dirent.h>
 #include <string.h>
-#include <iostream>
 #include <unistd.h>
 #include <map>
 
@@ -11,8 +10,8 @@ void PackageModule::fetch() {
 
     if((f = popen("pacman -Q 2> /dev/null", "r"))) {
         int count = 0;
-        char *content = (char *) malloc(8);
-        while (fgets(content, 8, f)) {
+        char *content = (char *) malloc(1024);
+        while (fgets(content, 1024, f)) {
             count++;
         }
         free(content);
@@ -21,8 +20,8 @@ void PackageModule::fetch() {
 
     if((f = popen("rpm -qa 2> /dev/null", "r"))) {
         int count = 0;
-        char *content = (char *) malloc(8);
-        while (fgets(content, 8, f)) {
+        char *content = (char *) malloc(1024);
+        while (fgets(content, 1024, f)) {
             count++;
         }
         free(content);
@@ -31,8 +30,8 @@ void PackageModule::fetch() {
 
     if((f = popen("flatpak list 2> /dev/null", "r"))) {
         int count = 0;
-        char *content = (char *) malloc(8);
-        while (fgets(content, 8, f)) {
+        char *content = (char *) malloc(1024);
+        while (fgets(content, 1024, f)) {
             count++;
         }
         free(content);
@@ -41,8 +40,8 @@ void PackageModule::fetch() {
 
     if((f = popen("apk info 2> /dev/null", "r"))) {
         int count = 0;
-        char *content = (char *) malloc(8);
-        while (fgets(content, 8, f)) {
+        char *content = (char *) malloc(1024);
+        while (fgets(content, 1024, f)) {
             count++;
         }
         free(content);
