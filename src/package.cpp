@@ -9,44 +9,44 @@ void PackageModule::fetch() {
     std::map<std::string, int> packageMap;
     FILE *f;
 
-    if((f = popen("pacman -Q", "r"))) {
+    if((f = popen("pacman -Q 2> /dev/null", "r"))) {
         int count = 0;
-        char *content = (char *) malloc(256);
-        while (fgets(content, 256, f)) {
+        char *content = (char *) malloc(8);
+        while (fgets(content, 8, f)) {
             count++;
         }
-        pclose(f);
-        packageMap.insert(std::pair<std::string,int>("pacman", count));
+        free(content);
+        if(!pclose(f)) packageMap.insert(std::pair<std::string,int>("pacman", count));
     }
 
-    if((f = popen("rpm -qa", "r"))) {
+    if((f = popen("rpm -qa 2> /dev/null", "r"))) {
         int count = 0;
-        char *content = (char *) malloc(256);
-        while (fgets(content, 256, f)) {
+        char *content = (char *) malloc(8);
+        while (fgets(content, 8, f)) {
             count++;
         }
-        pclose(f);
-        packageMap.insert(std::pair<std::string,int>("rpm", count));
+        free(content);
+        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("rpm", count));
     }
 
-    if((f = popen("flatpak list", "r"))) {
+    if((f = popen("flatpak list 2> /dev/null", "r"))) {
         int count = 0;
-        char *content = (char *) malloc(256);
-        while (fgets(content, 256, f)) {
+        char *content = (char *) malloc(8);
+        while (fgets(content, 8, f)) {
             count++;
         }
-        pclose(f);
-        packageMap.insert(std::pair<std::string,int>("flatpak", count - 1));
+        free(content);
+        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("flatpak", count - 1));
     }
 
-    if((f = popen("apk info", "r"))) {
+    if((f = popen("apk info 2> /dev/null", "r"))) {
         int count = 0;
-        char *content = (char *) malloc(256);
-        while (fgets(content, 256, f)) {
+        char *content = (char *) malloc(8);
+        while (fgets(content, 8, f)) {
             count++;
         }
-        pclose(f);
-        packageMap.insert(std::pair<std::string,int>("apk", count));
+        free(content);
+        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("apk", count));
     }
     // potential fast path for pacman
     /*if((f = fopen("/usr/bin/pacman", "r"))) {
