@@ -4,51 +4,21 @@
 #include <unistd.h>
 #include <map>
 
+int countLines(FILE* f) {
+    int count = 0;
+    char *content = (char *) malloc(1024);
+    while (fgets(content, 1024, f)) {
+        count++;
+    }
+    free(content);
+    return count;
+}
+
 void PackageModule::fetch() {
     std::map<std::string, int> packageMap;
     FILE *f;
 
-    if((f = popen("pacman -Q 2> /dev/null", "r"))) {
-        int count = 0;
-        char *content = (char *) malloc(1024);
-        while (fgets(content, 1024, f)) {
-            count++;
-        }
-        free(content);
-        if(!pclose(f)) packageMap.insert(std::pair<std::string,int>("pacman", count));
-    }
-
-    if((f = popen("rpm -qa 2> /dev/null", "r"))) {
-        int count = 0;
-        char *content = (char *) malloc(1024);
-        while (fgets(content, 1024, f)) {
-            count++;
-        }
-        free(content);
-        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("rpm", count));
-    }
-
-    if((f = popen("flatpak list 2> /dev/null", "r"))) {
-        int count = 0;
-        char *content = (char *) malloc(1024);
-        while (fgets(content, 1024, f)) {
-            count++;
-        }
-        free(content);
-        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("flatpak", count - 1));
-    }
-
-    if((f = popen("apk info 2> /dev/null", "r"))) {
-        int count = 0;
-        char *content = (char *) malloc(1024);
-        while (fgets(content, 1024, f)) {
-            count++;
-        }
-        free(content);
-        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("apk", count));
-    }
-    // potential fast path for pacman
-    /*if((f = fopen("/usr/bin/pacman", "r"))) {
+    if((f = fopen("/usr/bin/pacman", "r"))) {
        fclose(f);
        struct dirent *files;
        int pacmanPkgs = 0;
@@ -60,10 +30,17 @@ void PackageModule::fetch() {
            pacmanPkgs -= 3;
            packageMap.insert(std::pair<std::string,int>("pacman", pacmanPkgs));
        }
-    }*/
+    } else if((f = popen("pacman -Q 2> /dev/null", "r"))) {
+        int count = countLines(f);
+        if(!pclose(f)) packageMap.insert(std::pair<std::string,int>("pacman", count));
+    }
 
-    // potential fast path for flatpak
-    /*if((f = fopen("/usr/bin/flatpak", "r"))) {
+    if((f = popen("rpm -qa 2> /dev/null", "r"))) {
+        int count = countLines(f);
+        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("rpm", count));
+    }
+
+    if((f = fopen("/usr/bin/flatpak", "r"))) {
        fclose(f);
        struct dirent *files;
        int fpPkgs = 0;
@@ -79,7 +56,15 @@ void PackageModule::fetch() {
            fpPkgs -= 4;
            packageMap.insert(std::pair<std::string,int>("flatpak", fpPkgs));
        }
-    }*/
+    } else if((f = popen("flatpak list 2> /dev/null", "r"))) {
+        int count = countLines(f);
+        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("flatpak", count - 1));
+    }
+
+    if((f = popen("apk info 2> /dev/null", "r"))) {
+        int count = countLines(f);
+        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("apk", count));
+    }
 
     // iterate over packageMap and it to the modules content
     std::map<std::string, int>::iterator it;
