@@ -40,6 +40,7 @@ void PackageModule::fetch() {
         if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("rpm", count));
     }
 
+    #ifdef __linux__
     if((f = fopen("/usr/bin/flatpak", "r"))) {
        fclose(f);
        struct dirent *files;
@@ -60,10 +61,27 @@ void PackageModule::fetch() {
         int count = countLines(f);
         if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("flatpak", count - 1));
     }
+    #endif
 
+    #ifdef __linux__
     if((f = popen("apk info 2> /dev/null", "r"))) {
         int count = countLines(f);
         if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("apk", count));
+    }
+    #endif
+
+    if((f = fopen("/usr/local/bin/brew", "r"))) {
+       fclose(f);
+       struct dirent *files;
+       int brewPkgs = 0;
+       DIR *brew = opendir("/usr/local/Cellar");
+       while ((files = readdir(brew)) != NULL) {
+           brewPkgs++;
+       }
+       if (brewPkgs != 0) {
+           brewPkgs -= 3;
+           packageMap.insert(std::pair<std::string,int>("homebrew", brewPkgs));
+       }
     }
 
     // iterate over packageMap and it to the modules content
