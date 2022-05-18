@@ -3,6 +3,7 @@
 #include <cstring>
 
 CpuInfo::CpuInfo(bool partial) {
+    #ifdef __linux__
     if (partial) {
         isPartial = true;
     } else {
@@ -30,9 +31,11 @@ CpuInfo::CpuInfo(bool partial) {
         }
         delete[] currentLine;
     }
+    #endif
 }
 
 std::string CpuInfo::getValue(std::string key)  {
+    #ifdef __linux__
     if (isPartial) {
         FILE *f = fopen("/proc/cpuinfo", "r");
 
@@ -69,4 +72,7 @@ std::string CpuInfo::getValue(std::string key)  {
     } else {
         return map[key];
     }
+    #else 
+    return "";
+    #endif
 }
