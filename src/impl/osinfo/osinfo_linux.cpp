@@ -4,7 +4,7 @@ std::string OsInfo::getOsName() {
     return parser.getValue("PRETTY_NAME");
 }
 
-std::string OsInfo::getVer() {
+std::string OsInfo::getOsVer() {
     return "";
 }
 
