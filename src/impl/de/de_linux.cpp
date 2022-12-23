@@ -35,7 +35,6 @@ void DeModule::fetch() {
             || files->d_name[0] == '9') {
             comm[6] = '\0';
             strcat(comm, files->d_name);
-            strcat(comm, "/comm");
             struct stat sFile;
             stat(comm, &sFile);
             if (sFile.st_uid == currentUserId) {
