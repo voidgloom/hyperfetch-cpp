@@ -4,6 +4,14 @@
 #include <unistd.h>
 #include <map>
 
+#ifdef __aarch64__
+    #define HOMEBREW_CELLAR "/opt/homebrew/Cellar"
+    #define HOMEBREW_BINARY "/opt/homebrew/bin/brew"
+#else
+    #define HOMEBREW_BINARY "/usr/local/bin/brew"
+    #define HOMEBREW_CELLAR "/usr/local/Cellar"
+#endif
+
 int countLines(FILE* f) {
     int count = 0;
     char *content = (char *) malloc(1024);
@@ -70,11 +78,11 @@ void PackageModule::fetch() {
     }
     #endif
 
-    if((f = fopen("/usr/local/bin/brew", "r"))) {
+    if((f = fopen(HOMEBREW_BINARY, "r"))) {
        fclose(f);
        struct dirent *files;
        int brewPkgs = 0;
-       DIR *brew = opendir("/usr/local/Cellar");
+       DIR *brew = opendir(HOMEBREW_CELLAR);
        while ((files = readdir(brew)) != NULL) {
            brewPkgs++;
        }
@@ -82,6 +90,7 @@ void PackageModule::fetch() {
            brewPkgs -= 3;
            packageMap.insert(std::pair<std::string,int>("homebrew", brewPkgs));
        }
+       closedir(brew);
     }
 
     // iterate over packageMap and it to the modules content
