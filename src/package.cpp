@@ -29,13 +29,12 @@ void PackageModule::fetch() {
     if((f = fopen("/usr/bin/pacman", "r"))) {
        fclose(f);
        struct dirent *files;
-       int pacmanPkgs = 0;
+       int pacmanPkgs = -3;
        DIR *pacman = opendir("/var/lib/pacman/local");
        while ((files = readdir(pacman)) != NULL) {
            pacmanPkgs++;
        }
        if (pacmanPkgs != 0) {
-           pacmanPkgs -= 3;
            packageMap.insert(std::pair<std::string,int>("pacman", pacmanPkgs));
        }
     } else if((f = popen("pacman -Q 2> /dev/null", "r"))) {
