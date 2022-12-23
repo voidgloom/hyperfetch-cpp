@@ -4,7 +4,7 @@
 
 class OSReleaseParser {
     private:
-        std::map<std::string, std::string> map;
+        static std::map<std::string, std::string> map;
     public:
         OSReleaseParser();
         std::string getValue(std::string key);

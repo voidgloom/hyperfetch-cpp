@@ -3,8 +3,13 @@
 #include <filesystem>
 #include <iostream>
 
+std::map<std::string, std::string> OSReleaseParser::map;
+
 OSReleaseParser::OSReleaseParser() {
     #ifdef __linux__
+    if (!map.empty()) {
+        return;
+    }
     FILE *f;
     if (std::filesystem::exists("/bedrock/etc/os-release")) {
        f = fopen("/bedrock/etc/os-release", "r");
