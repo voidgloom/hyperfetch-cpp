@@ -8,5 +8,6 @@ void CpuModule::fetch() {
     sysctlbyname("machdep.cpu.brand_string", cpu, &len, NULL, 0);
 
     content = cpu;
+    free(cpu);
     prefix = "CPU";
 }

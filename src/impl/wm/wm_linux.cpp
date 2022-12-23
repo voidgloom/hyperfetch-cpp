@@ -44,6 +44,7 @@ void WmModule::fetch() {
                     token = strtok(NULL, "/");
                 }
                 processNames.push_back(oldToken);
+                delete[] buffer;
             }
         }
     }

@@ -17,5 +17,6 @@ std::string OsInfo::getOsVer() {
     sysctlbyname("kern.osproductversion", osVerString, &len, NULL, 0);
     std::string returnVal = "";
     returnVal += osVerString;
+    free(osVerString);
     return returnVal;
 }

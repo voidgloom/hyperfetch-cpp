@@ -8,5 +8,6 @@ void ModelModule::fetch() {
     sysctlbyname("hw.model", model, &len, NULL, 0);
 
     content = model;
+    free(model);
     prefix = "Device";
 }
