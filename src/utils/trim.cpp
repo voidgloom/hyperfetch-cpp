@@ -1,3 +1,4 @@
+#ifdef __linux__
 #include <algorithm>
 #include <cctype>
 #include <locale>
@@ -14,3 +15,4 @@ void ltrim(std::string &s) {
     }));
 }
 }
+#endif

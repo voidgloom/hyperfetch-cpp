@@ -1,8 +1,8 @@
 #include "distro.hpp"
-#include "utils/osrelease.hpp"
+#include "osinfo.hpp"
 
 void DistroModule::fetch() {
-    OSReleaseParser parser;
-    content = parser.getValue("PRETTY_NAME");
+    OsInfo info;
+    content = info.getOsName();
     prefix = "OS";
 }
