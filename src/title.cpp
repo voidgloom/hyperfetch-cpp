@@ -8,7 +8,7 @@ void TitleModule::fetch() {
   if (titleFormat != NULL)
     titleFormatString = titleFormat;
   else
-    titleFormatString = "\033[1;38;5;5m";
+    titleFormatString = "\033[1;38;5;5;4m";
 
   noSeperator = true;
   utsname unameResult;
