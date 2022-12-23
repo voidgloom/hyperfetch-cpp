@@ -11,27 +11,21 @@ OSReleaseParser::OSReleaseParser() {
         return;
     }
     FILE *f;
-    if (std::filesystem::exists("/bedrock/etc/os-release")) {
-       f = fopen("/bedrock/etc/os-release", "r");
-    }
-    else {
+    if (!(f = fopen("/bedrock/etc/os-release", "r"))) {
        f = fopen("/etc/os-release", "r");
     }
-    fseek(f, 0, SEEK_END);
-    size_t f_size = ftell(f);
 
-    char *currentLine = new char[f_size];
+    char *currentLine = new char[4096];
     char *token;
 
-    rewind(f);
-    while (fgets(currentLine, f_size, f) != NULL) {
+    while (fgets(currentLine, 4096, f) != NULL) {
         // key
         token = strtok(currentLine, "=");
         std::string key = token;
         // value
         token = strtok(NULL, "=");
         // remove quotes and newline from value
-        std::string setToValue = "";
+        char *buf = new char[128];
         int i = 0;
         int offset = 0;
         while (token[i] != '\0') {
@@ -42,12 +36,14 @@ OSReleaseParser::OSReleaseParser() {
                 case '\n':
                     break;
                 default:
-                    setToValue += token[i];
+                    buf[i - offset] = token[i];
             }
             i++;
         }
+        buf[i - offset - 1] = '\0';
 
-        std::string value = setToValue;
+        std::string value = buf;
+        delete[] buf;
         map.insert(std::pair<std::string, std::string>(key, value));
     }
     delete[] currentLine;
