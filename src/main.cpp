@@ -14,6 +14,7 @@
 #include "ram.hpp"
 #include "disk.hpp"
 #include "de.hpp"
+#include "gpu.hpp"
 
 int asciiWidth;
 int longestPrefix;
@@ -38,7 +39,7 @@ int main() {
   if (infoChar != NULL) {
     info = infoChar;
   } else {
-    info = "title distro kernel shell model uptime wm de pkgs cpu mem disk";
+    info = "title distro kernel shell model uptime wm de pkgs cpu gpu mem disk";
   }
 
   std::list<HyperfetchModule> module_list;
@@ -118,6 +119,11 @@ int main() {
       module_list.push_back(module);
     } else if (word == "de") {
       DeModule module;
+      if (longestPrefix < 6) longestPrefix = 6;
+      module.fetch();
+      module_list.push_back(module);
+    } else if (word == "gpu") {
+      GpuModule module;
       if (longestPrefix < 6) longestPrefix = 6;
       module.fetch();
       module_list.push_back(module);
