@@ -68,9 +68,15 @@ std::string CpuInfo::getValue(std::string key)  {
             delete[] currentLine;
             return value;
         }
-        return map[key];
+        if (map.find(key) != map.end())
+            return map[key];
+        else
+            return "";
     } else {
-        return map[key];
+        if (map.find(key) != map.end())
+            return map[key];
+        else
+            return "";
     }
     #else 
     return "";
