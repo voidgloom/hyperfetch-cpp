@@ -10,8 +10,13 @@ void CpuModule::fetch() {
     FILE *f;
     char *cpuModelName = NULL;
     if ((f = fopen(cache_path.c_str(), "r"))) {
-        cpuModelName = new char[1024];
-        fgets(cpuModelName, 1024, f);
+        
+        struct stat sFile;
+        stat(cache_path.c_str(), &sFile);
+        if (sFile.st_size != 0) {
+            cpuModelName = new char[1024];
+            fgets(cpuModelName, 1024, f);
+        }
     }
     // set content to cached cpu model name if it exists
     // if it doesn't parse /proc/cpuinfo and write the result into the cache
