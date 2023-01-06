@@ -37,7 +37,7 @@ void AsciiArt::print() {
          asciiLogo = info.getOsType();
     }
 
-    if (asciiLogo == "arch") {
+    if (asciiLogo == "arch" || asciiLogo == "archarm") {
         if (smallLogoStr != "1") {
             const char *logo =
                  "\033[38;5;6m               -@\n"
