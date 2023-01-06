@@ -31,5 +31,11 @@ void CpuModule::fetch() {
             fputs(content.c_str(), f);
         }
     }
+    // fallback if cpu type isn't in /proc/cpuinfo
+    if (content == "") {
+        #ifdef __aarch64__
+        content = "Unknown ARM CPU";
+        #endif
+    }
     prefix = "CPU";
 }
