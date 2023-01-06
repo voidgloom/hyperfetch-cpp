@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "impl/cpu/cpu_fallback_model_list.hpp"
 
 void CpuModule::fetch() {
     CpuInfo cpu(true);
@@ -34,7 +35,15 @@ void CpuModule::fetch() {
     // fallback if cpu type isn't in /proc/cpuinfo
     if (content == "") {
         #ifdef __aarch64__
-        content = "Unknown ARM CPU";
+        FILE *f;
+        if ((f = fopen("/sys/firmware/devicetree/base/model", "r"))) {
+            char *model = new char[1024];
+            fgets(model, 1024, f);
+            content = cpu_fallback_model_map[model];
+            fclose(f);
+        } else {
+           content = "Unknown ARM CPU";
+        }
         #endif
     }
     prefix = "CPU";
