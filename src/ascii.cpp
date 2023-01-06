@@ -56,7 +56,7 @@ void AsciiArt::print() {
                  " @H@*`                    `*%#@\n"
                  "*`                            `*\033[0m";
             width = 34;
-            height = 15;
+            height = 14;
             write(0, logo, strlen(logo));
         } else {
             const char *logo =

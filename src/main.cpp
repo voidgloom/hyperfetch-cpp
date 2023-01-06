@@ -35,7 +35,7 @@ int main() {
 
   asciiWidth = ascii.width;
   // return to top
-  std::cout << "\033[" << ascii.height << "A";
+  std::cout << "\033[" << ascii.height << "A" << "\033[" << ascii.width << "D";
 
   if (infoChar != NULL) {
     info = infoChar;
