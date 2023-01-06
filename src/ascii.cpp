@@ -96,7 +96,7 @@ void AsciiArt::print() {
             height = 17;
             write(0, logo, strlen(logo));
     } else {
-        width = 0;
-        height = 0;
+        width = -1;
+        height = -1;
     }
 }
