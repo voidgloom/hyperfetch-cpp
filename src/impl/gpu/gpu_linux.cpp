@@ -1,4 +1,4 @@
-void GpuModule::fetch(bool bar) {
-    prefix = "Memory";
+void GpuModule::fetch() {
+    prefix = "GPU";
     content = "Unknown";
 }
