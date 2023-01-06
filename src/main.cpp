@@ -1,3 +1,4 @@
+#include <cstring>
 #include <sstream>
 #include <iostream>
 #include <list>
@@ -135,6 +136,19 @@ int main() {
   for (HyperfetchModule m : module_list) {
     m.print();
     info_amount++;
+  }
+  
+  char *show_color_char = std::getenv("HF_SHOW_COLORS");
+  std::string show_color = "";
+  if (show_color_char) 
+    show_color = show_color_char;
+  
+
+  if (show_color != "0") {
+    std::cout << "\n\033[" << asciiWidth << "C" 
+    << "\033[48;5;0m   \033[48;5;1m   \033[48;5;2m   \033[48;5;3m   \033[48;5;4m   \033[48;5;5m   \033[48;5;6m   \033[48;5;7m   \n" 
+    << "\033[" << asciiWidth << "C" << "\033[48;5;8m   \033[48;5;9m   \033[48;5;10m   \033[48;5;11m   \033[48;5;12m   \033[48;5;13m   \033[48;5;14m   \033[48;5;15m   \033[0m" 
+    << std::endl;
   }
 
   if (ascii.height != 0)
