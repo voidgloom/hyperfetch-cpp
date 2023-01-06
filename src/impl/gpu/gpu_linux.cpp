@@ -1,7 +1,9 @@
 
 #include <cstdlib>
 #include <dirent.h>
+#include "cpu.hpp"
 #include "impl/gpu/gpu_pci_list.hpp"
+#include "impl/gpu/gpu_soc_list.hpp"
 #include "cstring"
 
 #define PCI_DEV_DIR "/sys/bus/pci/devices"
@@ -43,6 +45,15 @@ void GpuModule::fetch() {
         delete[] dev_vendor;
         delete[] dev_device;
     }
+    // on arm socs the gpu might not be connected via pci(e). in that case we check a soc->gpu map.
+    #ifdef __aarch64__
+    if (content == "") {
+        // get the cpu
+        CpuModule cpu;
+        cpu.fetch();
+        content = gpu_soc_map[cpu.content];
+    }   
+    #endif
     prefix = "GPU";
     if (content == "")
         content = "Unknown";
