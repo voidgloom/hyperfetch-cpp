@@ -15,6 +15,7 @@ std::string get_parent(std::string pid) {
 
     FILE *f = fopen(pid_as_str.c_str(), "r");
     char *buf = new char[4096];
+    bzero(buf, strlen(buf));
     fgets(buf, 4096, f);
     fclose(f);
     strtok(buf, " ");
@@ -31,6 +32,7 @@ std::string get_process_name(std::string pid) {
     pid_as_str += pid;
     pid_as_str += "/exe";
     char *buf = new char[4096];
+    bzero(buf, 4096);
     readlink(pid_as_str.c_str(), buf, 4096);
     int lastSlashPos = 0;
     int buflen = strlen(buf);
@@ -41,22 +43,13 @@ std::string get_process_name(std::string pid) {
     // unsafe {
         char *basename = buf + lastSlashPos + 1;
     // }
-    return strdup(basename);
+    std::string retval = strdup(basename);
+    delete[] buf;
+    return retval;
 }
 
 void TerminalModule::fetch() {
-    FILE *f = fopen("/proc/self/stat", "r");
-    char *buf = new char[4096];
-    fgets(buf, 4096, f);
-    fclose(f);
-    strtok(buf, " ");
-    strtok(NULL, " ");
-    strtok(NULL, " ");
-    std::string ppid = strtok(NULL, " ");
-    std::string term_pid = get_parent(ppid);
-    
-    delete[] buf;
-    
+    std::string term_pid = get_parent(get_parent("self"));
     prefix = "Terminal";
     content = get_process_name(term_pid);
 }
