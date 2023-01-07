@@ -1,4 +1,4 @@
 void TerminalModule::fetch() {
-    prefix = "Terminal"
+    prefix = "Terminal";
     content = std::getenv("TERM_PROGRAM");
 }
