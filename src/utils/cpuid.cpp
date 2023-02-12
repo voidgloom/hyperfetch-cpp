@@ -1,5 +1,6 @@
 #include "cpuid.hpp"
 #include "trim.hpp"
+#include "wrapper.hpp"
 #include <cstring>
 
 CpuInfo::CpuInfo(bool partial) {
@@ -7,12 +8,12 @@ CpuInfo::CpuInfo(bool partial) {
     if (partial) {
         isPartial = true;
     } else {
-        FILE *f = fopen("/proc/cpuinfo", "r");
+        FWrap f("/proc/cpuinfo", "r");
 
-        char *currentLine = new char[128000];
+        Wrap<char *> currentLine(1024);
         char *token;
 
-        while (fgets(currentLine, 128000, f) != NULL) {
+        while (fgets(currentLine, 1024, f) != NULL) {
             // key
             token = strtok(currentLine, ":");
             std::string key = token;
@@ -29,7 +30,6 @@ CpuInfo::CpuInfo(bool partial) {
             if (!key.empty())
                 map.insert(std::pair<std::string, std::string>(key, value));
         }
-        delete[] currentLine;
     }
     #endif
 }
@@ -37,12 +37,12 @@ CpuInfo::CpuInfo(bool partial) {
 std::string CpuInfo::getValue(std::string key)  {
     #ifdef __linux__
     if (isPartial) {
-        FILE *f = fopen("/proc/cpuinfo", "r");
+        FWrap f("/proc/cpuinfo", "r");
 
-        char *currentLine = new char[256000];
+        Wrap<char *> currentLine(1024);
         char *token;
 
-        while (fgets(currentLine, 256000, f) != NULL) {
+        while (fgets(currentLine, 1024, f) != NULL) {
             // key
             token = strtok(currentLine, ":");
             std::string getKey = token;
@@ -62,10 +62,8 @@ std::string CpuInfo::getValue(std::string key)  {
             if (!getKey.empty() && map.count(getKey) == 0 )
                 map.insert(std::pair<std::string, std::string>(getKey, value));
             else {
-             delete[] currentLine;
              return value;
             }
-            delete[] currentLine;
             return value;
         }
         if (map.find(key) != map.end())

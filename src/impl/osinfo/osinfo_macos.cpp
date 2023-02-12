@@ -1,4 +1,5 @@
 #include <sys/sysctl.h>
+#include "utils/wrapper.hpp"
 #include <string>
 
 std::string OsInfo::getOsType() {
@@ -10,13 +11,10 @@ std::string OsInfo::getOsName() {
 }
 
 std::string OsInfo::getOsVer() {
-    char *osVerString;
     size_t len;
     sysctlbyname("kern.osproductversion", NULL, &len, NULL, 0);
-    osVerString = (char *) malloc(len);
+    Wrap<char *> osVerString(len);
     sysctlbyname("kern.osproductversion", osVerString, &len, NULL, 0);
-    std::string returnVal = "";
-    returnVal += osVerString;
-    free(osVerString);
+    std::string returnVal = osVerString.o;
     return returnVal;
 }

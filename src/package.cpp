@@ -1,4 +1,6 @@
+#include <string>
 #include "package.hpp"
+#include "utils/wrapper.hpp"
 #include <dirent.h>
 #include <string.h>
 #include <unistd.h>
@@ -12,13 +14,14 @@
     #define HOMEBREW_CELLAR "/usr/local/Cellar"
 #endif
 
+// #define std::pair<std::string, int> std::pair<std::string, int>
+
 int countLines(FILE* f) {
     int count = 0;
-    char *content = (char *) malloc(1024);
+    Wrap<char *> content(1024);
     while (fgets(content, 1024, f)) {
         count++;
     }
-    free(content);
     return count;
 }
 
@@ -30,21 +33,21 @@ void PackageModule::fetch() {
        fclose(f);
        struct dirent *files;
        int pacmanPkgs = -3;
-       DIR *pacman = opendir("/var/lib/pacman/local");
+       DWrap pacman("/var/lib/pacman/local");
        while ((files = readdir(pacman)) != NULL) {
            pacmanPkgs++;
        }
        if (pacmanPkgs != 0) {
-           packageMap.insert(std::pair<std::string,int>("pacman", pacmanPkgs));
+           packageMap.insert(std::pair<std::string, int>("pacman", pacmanPkgs));
        }
     } else if((f = popen("pacman -Q 2> /dev/null", "r"))) {
         int count = countLines(f);
-        if(!pclose(f)) packageMap.insert(std::pair<std::string,int>("pacman", count));
+        if(!pclose(f)) packageMap.insert(std::pair<std::string, int>("pacman", count));
     }
 
     if((f = popen("rpm -qa 2> /dev/null", "r"))) {
         int count = countLines(f);
-        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("rpm", count));
+        if (!pclose(f)) packageMap.insert(std::pair<std::string, int>("rpm", count));
     }
 
     #ifdef __linux__
@@ -52,28 +55,28 @@ void PackageModule::fetch() {
        fclose(f);
        struct dirent *files;
        int fpPkgs = 0;
-       DIR *fpApp = opendir("/var/lib/flatpak/app");
+       DWrap fpApp("/var/lib/flatpak/app");
        while ((files = readdir(fpApp)) != NULL) {
            fpPkgs++;
        }
-       DIR *fpRuntime = opendir("/var/lib/flatpak/runtime");
+       DWrap fpRuntime("/var/lib/flatpak/runtime");
        while ((files = readdir(fpRuntime)) != NULL) {
            fpPkgs++;
        }
        if (fpPkgs != 0) {
            fpPkgs -= 4;
-           packageMap.insert(std::pair<std::string,int>("flatpak", fpPkgs));
+           packageMap.insert(std::pair<std::string, int>("flatpak", fpPkgs));
        }
     } else if((f = popen("flatpak list 2> /dev/null", "r"))) {
         int count = countLines(f);
-        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("flatpak", count - 1));
+        if (!pclose(f)) packageMap.insert(std::pair<std::string, int>("flatpak", count - 1));
     }
     #endif
 
     #ifdef __linux__
     if((f = popen("apk info 2> /dev/null", "r"))) {
         int count = countLines(f);
-        if (!pclose(f)) packageMap.insert(std::pair<std::string,int>("apk", count));
+        if (!pclose(f)) packageMap.insert(std::pair<std::string, int>("apk", count));
     }
     #endif
 
@@ -81,15 +84,14 @@ void PackageModule::fetch() {
        fclose(f);
        struct dirent *files;
        int brewPkgs = 0;
-       DIR *brew = opendir(HOMEBREW_CELLAR);
+       DWrap brew(HOMEBREW_CELLAR);
        while ((files = readdir(brew)) != NULL) {
            brewPkgs++;
        }
        if (brewPkgs != 0) {
            brewPkgs -= 3;
-           packageMap.insert(std::pair<std::string,int>("homebrew", brewPkgs));
+           packageMap.insert(std::pair<std::string, int>("homebrew", brewPkgs));
        }
-       closedir(brew);
     }
 
     // iterate over packageMap and it to the modules content

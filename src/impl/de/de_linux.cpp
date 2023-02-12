@@ -6,6 +6,7 @@
 #include <cstring>
 #include <list>
 #include "deList.hpp"
+#include "utils/wrapper.hpp"
 
 void DeModule::fetch() {
     std::list<std::string> processNames;
@@ -13,15 +14,13 @@ void DeModule::fetch() {
     struct dirent *files;
     content = "unknown";
     
-    char *comm = new char[64];
-    comm[0] = '\0';
+    Wrap<char *> comm(64);
     strcat(comm, "/proc/");
-    char *exe = new char[64];
-    exe[0] = '\0';
+    Wrap<char *> exe(64);
     strcat(exe, "/proc/");
-    char *buffer = new char[4096];
+    Wrap<char *> buffer(4096);
 
-    DIR *dir = opendir("/proc/");
+    DWrap dir("/proc/");
     
     while((files = readdir(dir)) != NULL) {
         if (files->d_name[0] == '1'
@@ -40,7 +39,7 @@ void DeModule::fetch() {
             if (sFile.st_uid == currentUserId) {
                 int buflen = strlen(buffer);
                 bzero(buffer, buflen);
-                exe[6] = '\0';
+                exe.o[6] = '\0';
                 strcat(exe, files->d_name);
                 strcat(exe, "/exe");
                 readlink(exe, buffer, 4096);
@@ -51,7 +50,7 @@ void DeModule::fetch() {
                         lastSlashPos = i;
                 }
                 // unsafe {
-                    char *basename = buffer + lastSlashPos + 1;
+                    char *basename = buffer.o + lastSlashPos + 1;
                 // }
                 if (deList.count(basename)) {
                     content = deList.find(basename)->second;
@@ -60,9 +59,6 @@ void DeModule::fetch() {
             }
         }
     }
-    delete[] comm;
-    delete[] buffer;
-    delete[] exe;
     
     prefix = "DE";
 }

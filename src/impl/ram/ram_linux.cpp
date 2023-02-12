@@ -1,15 +1,16 @@
 #include "utils/trim.hpp"
 #include "utils/bar.hpp"
+#include "utils/wrapper.hpp"
 #include <cstring>
 #include <cmath>
 
 void RamModule::fetch(bool bar) {
-    FILE *f = fopen("/proc/meminfo", "r");
-    if (!f) {
-    	prefix = "Memory";
-	    return;
-    }
-    char *cacheMemChar = new char[1024];
+
+
+    prefix = "Memory";
+    FWrap f("/proc/meminfo", "r");
+    if (!f) return;
+    Wrap<char *> cacheMemChar(1024);
     int totalMemNum;
     int bufferMem;
     int freeMem;
@@ -48,12 +49,10 @@ void RamModule::fetch(bool bar) {
     // non-cache non-buffer non-reclaimable used memory
     int ncbrcUsedMem = totalMemNum - freeMem - bufferMem - cacheMem - sReclaimable;
 
-    delete[] cacheMemChar;
     if (!bar) {
         content = std::to_string(ncbrcUsedMem) + "M / " + std::to_string(totalMemNum) + "M";
     } else {
         double memPercent = (double) ncbrcUsedMem / (double) totalMemNum * 100.0;
         content = ralsei::bar(15, lround(memPercent));
     }
-    prefix = "Memory";
 }

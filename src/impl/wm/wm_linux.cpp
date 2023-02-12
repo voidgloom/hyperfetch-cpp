@@ -7,6 +7,7 @@
 #include <cstring>
 #include <iostream>
 #include <list>
+#include "utils/wrapper.hpp"
 #ifdef __linux__
 #include "wmList.hpp"
 #endif
@@ -18,15 +19,13 @@ void WmModule::fetch() {
     uid_t currentUserId = geteuid();
     struct dirent *files;
 
-    char *comm = new char[64];
-    comm[0] = '\0';
+    Wrap<char *> comm(64);
     strcat(comm, "/proc/");
-    char *exe = new char[64];
-    exe[0] = '\0';
+    Wrap<char *> exe(64);
     strcat(exe, "/proc/");
-    char *buffer = new char[4096];
+    Wrap<char *> buffer(4096);
 
-    DIR *dir = opendir("/proc/");
+    DWrap dir("/proc/");
     while((files = readdir(dir)) != NULL) {
         if (files->d_name[0] == '1'
             || files->d_name[0] == '2'
@@ -37,14 +36,14 @@ void WmModule::fetch() {
             || files->d_name[0] == '7'
             || files->d_name[0] == '8'
             || files->d_name[0] == '9') {
-            comm[6] = '\0';
+            comm.o[6] = '\0';
             strcat(comm, files->d_name);
             struct stat sFile;
             stat(comm, &sFile);
             if (sFile.st_uid == currentUserId) {
                 int buflen = strlen(buffer);
                 bzero(buffer, buflen);
-                exe[6] = '\0';
+                exe.o[6] = '\0';
                 strcat(exe, files->d_name);
                 strcat(exe, "/exe");
                 readlink(exe, buffer, 4096);
@@ -55,7 +54,7 @@ void WmModule::fetch() {
                         lastSlashPos = i;
                 }
                 // unsafe {
-                    char *basename = buffer + lastSlashPos + 1;
+                    char *basename = buffer.o + lastSlashPos + 1;
                 // }
                 if (wmList.count(basename)) {
                     content = wmList.find(basename)->second;
@@ -64,9 +63,6 @@ void WmModule::fetch() {
             }
         }
     }
-    delete[] comm;
-    delete[] buffer;
-    delete[] exe;
     #else
     content = "unknown";
     #endif

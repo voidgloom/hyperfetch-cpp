@@ -1,4 +1,5 @@
 #include "osrelease.hpp"
+#include "wrapper.hpp"
 #include <cstring>
 #include <filesystem>
 #include <iostream>
@@ -10,12 +11,11 @@ OSReleaseParser::OSReleaseParser() {
     if (!map.empty()) {
         return;
     }
-    FILE *f;
-    if (!(f = fopen("/bedrock/etc/os-release", "r"))) {
-       f = fopen("/etc/os-release", "r");
-    }
+    FWrap f("/bedrock/etc/os-release", "r");
+    if (!f.f)
+       f.f = fopen("/etc/os-release", "r");
 
-    char *currentLine = new char[4096];
+    Wrap<char *> currentLine(4096);
     char *token;
 
     while (fgets(currentLine, 4096, f) != NULL) {
@@ -25,7 +25,7 @@ OSReleaseParser::OSReleaseParser() {
         // value
         token = strtok(NULL, "=");
         // remove quotes and newline from value
-        char *buf = new char[128];
+        Wrap<char *> buf(128);
         int i = 0;
         int offset = 0;
         while (token[i] != '\0') {
@@ -36,17 +36,15 @@ OSReleaseParser::OSReleaseParser() {
                 case '\n':
                     break;
                 default:
-                    buf[i - offset] = token[i];
+                    buf.o[i - offset] = token[i];
             }
             i++;
         }
-        buf[i - offset - 1] = '\0';
+        buf.o[i - offset - 1] = '\0';
 
-        std::string value = buf;
-        delete[] buf;
+        std::string value = buf.o;
         map.insert(std::pair<std::string, std::string>(key, value));
     }
-    delete[] currentLine;
     #endif
 }
 

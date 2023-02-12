@@ -1,17 +1,18 @@
 #include <cstdio>
 #include <cstring>
+#include "utils/wrapper.hpp"
 
 void ModelModule::fetch() {
   bool uses_devicetree = false;
-  FILE *f = fopen("/sys/devices/virtual/dmi/id/product_name", "r");
-  if (f == NULL) {
+  FWrap f("/sys/devices/virtual/dmi/id/product_name", "r");
+  if (!f.f) {
     uses_devicetree = true;
-    f = fopen("/sys/firmware/devicetree/base/model", "r");
+    f.f = fopen("/sys/firmware/devicetree/base/model", "r");
   }
   fseek(f, 0, SEEK_END);
   size_t f_size = ftell(f);
 
-  char *product_name = new char[f_size];
+  Wrap<char *> product_name(f_size);
 
   rewind(f);
   fgets(product_name, f_size, f);
@@ -23,18 +24,17 @@ void ModelModule::fetch() {
       case '\n':
         break;
       default:
-        finalValue += product_name[i];
+        finalValue += product_name.o[i];
     }
     i++;
   }
   
-  fclose(f);
   if (!uses_devicetree) {
-    f = fopen("/sys/devices/virtual/dmi/id/product_version", "r");
-    fseek(f, 0, SEEK_END);
-    f_size = ftell(f);
+    FWrap ver("/sys/devices/virtual/dmi/id/product_version", "r");
+    fseek(ver, 0, SEEK_END);
+    f_size = ftell(ver);
 
-    char *product_version = new char[f_size];
+    Wrap<char *> product_version(f_size);
 
     rewind(f);
     fgets(product_version, f_size, f);
@@ -47,14 +47,11 @@ void ModelModule::fetch() {
         case '\n':
           break;
         default:
-          finalValue += product_version[i];
+          finalValue += product_version.o[i];
       }
       i++;
     }
-    delete[] product_version;
   }
   prefix = "Device";
   content = finalValue;
-
-  delete[] product_name;
 }
