@@ -43,6 +43,7 @@ void RamModule::fetch(bool bar) {
             token = strtok(NULL, ":");
             token = strtok(token, " ");
             sReclaimable = std::atoi(token) / 1024;
+            break;
         }
         i++;
     }
