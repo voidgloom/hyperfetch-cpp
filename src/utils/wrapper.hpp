@@ -12,13 +12,14 @@ class Wrap {
 		 * Creates a wrapper object around a pointer that points to memory allocated by malloc()
 		 * @param alloc A pointer pointing to memory allocated by malloc 
 		 */
-		Wrap(void *alloc) {
+		__attribute((always_inline)) Wrap(void *alloc) {
 			#ifdef DEBUG_WRAPPERS
 				printf("wrap construct\n");
 			#endif
 			o = (T) alloc;
 		}
-		Wrap(int size) {
+
+		__attribute((always_inline)) Wrap(int size) {
 			#ifdef DEBUG_WRAPPERS
 				printf("wrap construct\n");
 			#endif
@@ -26,14 +27,14 @@ class Wrap {
 			bzero(o, size);
 		}
 
-		~Wrap() {
+		__attribute((always_inline)) ~Wrap() {
 			#ifdef DEBUG_WRAPPERS
 				printf("wrap destruct\n");
 			#endif
 			free(o);
 		}
 
-		operator T() {
+		__attribute((always_inline)) operator T() {
 			return o;
 		}
 
@@ -53,7 +54,7 @@ class FWrap {
 		 * @param path Path to a file
 		 * @param mode Mode to open the file in
 		 */
-		inline FWrap(const char *path, const char *mode) {
+		__attribute((always_inline)) FWrap(const char *path, const char *mode) {
 			#ifdef DEBUG_WRAPPERS
 				printf("fwrap construct\n");
 			#endif
@@ -65,21 +66,21 @@ class FWrap {
 		 * out of scope
 		 * @param handle A C file handle
 		 */
-		inline FWrap(FILE *handle) {
+		__attribute((always_inline)) FWrap(FILE *handle) {
 			#ifdef DEBUG_WRAPPERS
 				printf("fwrap construct\n");
 			#endif
 			f = handle;
 		}
 
-		inline ~FWrap() {
+		__attribute((always_inline)) ~FWrap() {
 			#ifdef DEBUG_WRAPPERS
 				printf("fwrap destruct\n");
 			#endif
 			fclose(f);
 		}
 
-		inline operator FILE*() {
+		__attribute((always_inline)) operator FILE*() {
 			return f;
 		}
 };
@@ -96,21 +97,21 @@ class DWrap {
 		 * Creates a wrapper around a C directory handle
 		 * @param path Path to a directory
 		 */
-		inline DWrap(const char *path) {
+		__attribute((always_inline)) DWrap(const char *path) {
 			#ifdef DEBUG_WRAPPERS
 				printf("dwrap construct\n");
 			#endif
 			d = opendir(path);
 		}
 
-		inline ~DWrap() {
+		 ~DWrap() {
 			#ifdef DEBUG_WRAPPERS
 				printf("dwrap destruct\n");
 			#endif
 			closedir(d);
 		}
 
-		inline operator DIR*() const {
+		__attribute((always_inline)) operator DIR*() const {
 			return d;
 		}
 };
