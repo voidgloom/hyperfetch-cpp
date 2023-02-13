@@ -14,7 +14,7 @@
     #define HOMEBREW_CELLAR "/usr/local/Cellar"
 #endif
 
-// #define std::pair<std::string, int> std::pair<std::string, int>
+#define pkg_pair std::pair<std::string, int>
 
 int countLines(FILE* f) {
     int count = 0;
@@ -38,16 +38,16 @@ void PackageModule::fetch() {
            pacmanPkgs++;
        }
        if (pacmanPkgs != 0) {
-           packageMap.insert(std::pair<std::string, int>("pacman", pacmanPkgs));
+           packageMap.insert(pkg_pair("pacman", pacmanPkgs));
        }
     } else if((f = popen("pacman -Q 2> /dev/null", "r"))) {
         int count = countLines(f);
-        if(!pclose(f)) packageMap.insert(std::pair<std::string, int>("pacman", count));
+        if(!pclose(f)) packageMap.insert(pkg_pair("pacman", count));
     }
 
     if((f = popen("rpm -qa 2> /dev/null", "r"))) {
         int count = countLines(f);
-        if (!pclose(f)) packageMap.insert(std::pair<std::string, int>("rpm", count));
+        if (!pclose(f)) packageMap.insert(pkg_pair("rpm", count));
     }
 
     #ifdef __linux__
@@ -69,14 +69,14 @@ void PackageModule::fetch() {
        }
     } else if((f = popen("flatpak list 2> /dev/null", "r"))) {
         int count = countLines(f);
-        if (!pclose(f)) packageMap.insert(std::pair<std::string, int>("flatpak", count - 1));
+        if (!pclose(f)) packageMap.insert(pkg_pair("flatpak", count - 1));
     }
     #endif
 
     #ifdef __linux__
     if((f = popen("apk info 2> /dev/null", "r"))) {
         int count = countLines(f);
-        if (!pclose(f)) packageMap.insert(std::pair<std::string, int>("apk", count));
+        if (!pclose(f)) packageMap.insert(pkg_pair("apk", count));
     }
     #endif
 
@@ -90,7 +90,7 @@ void PackageModule::fetch() {
        }
        if (brewPkgs != 0) {
            brewPkgs -= 3;
-           packageMap.insert(std::pair<std::string, int>("homebrew", brewPkgs));
+           packageMap.insert(pkg_pair("homebrew", brewPkgs));
        }
     }
 
