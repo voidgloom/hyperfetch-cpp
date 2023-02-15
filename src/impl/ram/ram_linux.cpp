@@ -5,8 +5,6 @@
 #include <cmath>
 
 void RamModule::fetch(bool bar) {
-
-
     prefix = "Memory";
     FWrap f("/proc/meminfo", "r");
     if (!f) return;

@@ -17,5 +17,5 @@ void UptimeModule::fetch() {
     else
         content = std::to_string(uptime_minutes) + " minutes";
 
-    prefix="Uptime";
+    prefix = "Uptime";
 }
