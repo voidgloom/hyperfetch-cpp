@@ -2,7 +2,7 @@
 #include "package.hpp"
 #include "utils/wrapper.hpp"
 #include <dirent.h>
-#include <string.h>
+// #include <string.h>
 #include <unistd.h>
 #include <map>
 
@@ -16,7 +16,8 @@
 
 #define pkg_pair std::pair<std::string, int>
 
-int countLines(FILE* f) {
+/* <Helper functions> */
+int countLines(FILE *f) {
     int count = 0;
     Wrap<char *> content(1024);
     while (fgets(content, 1024, f)) {
@@ -25,71 +26,74 @@ int countLines(FILE* f) {
     return count;
 }
 
+int countFiles(DIR *dir) {
+    int count = 0;
+    struct dirent *files;
+    while ((files = readdir(dir))) {
+        count++;
+    }
+    return count;
+}
+
+int countLinesCmd(const char *cmd) {
+    FILE *f;
+    if ((f = popen(cmd, "r"))) {
+        int count = countLines(f);
+        if (!pclose(f)) return count;
+    }
+    return 0;
+}
+
+// macOS < 10.15 does not implement std::filesystem
+namespace fs {
+    bool exists(const char* filename) {
+        FWrap f(filename, "r");
+        return f.f;
+    }
+}
+/* </Helper functions> */
+
 void PackageModule::fetch() {
     std::map<std::string, int> packageMap;
-    FILE *f;
-
-    if((f = fopen("/usr/bin/pacman", "r"))) {
-       fclose(f);
-       struct dirent *files;
-       int pacmanPkgs = -3;
+    
+    if (fs::exists("/usr/bin/pacman")) {
        DWrap pacman("/var/lib/pacman/local");
-       while ((files = readdir(pacman)) != NULL) {
-           pacmanPkgs++;
-       }
+       int pacmanPkgs = countFiles(pacman) - 3;
        if (pacmanPkgs != 0) {
            packageMap.insert(pkg_pair("pacman", pacmanPkgs));
        }
-    } else if((f = popen("pacman -Q 2> /dev/null", "r"))) {
-        int count = countLines(f);
-        if(!pclose(f)) packageMap.insert(pkg_pair("pacman", count));
+    } else if (int count = countLinesCmd("pacman -Q 2> /dev/null")) {
+        packageMap.insert(pkg_pair("pacman", count));
     }
 
-    if((f = popen("rpm -qa 2> /dev/null", "r"))) {
-        int count = countLines(f);
-        if (!pclose(f)) packageMap.insert(pkg_pair("rpm", count));
+    if (int count = countLinesCmd("rpm -qa 2> /dev/null")) {
+        packageMap.insert(pkg_pair("rpm", count));
     }
 
     #ifdef __linux__
-    if((f = fopen("/usr/bin/flatpak", "r"))) {
-       fclose(f);
-       struct dirent *files;
-       int fpPkgs = 0;
+    if(fs::exists("/usr/bin/flatpak")) {
        DWrap fpApp("/var/lib/flatpak/app");
-       while ((files = readdir(fpApp)) != NULL) {
-           fpPkgs++;
-       }
+       int fpPkgs = countFiles(fpApp) - 4; 
        DWrap fpRuntime("/var/lib/flatpak/runtime");
-       while ((files = readdir(fpRuntime)) != NULL) {
-           fpPkgs++;
-       }
+       fpPkgs += countFiles(fpRuntime);
        if (fpPkgs != 0) {
-           fpPkgs -= 4;
            packageMap.insert(std::pair<std::string, int>("flatpak", fpPkgs));
        }
-    } else if((f = popen("flatpak list 2> /dev/null", "r"))) {
-        int count = countLines(f);
-        if (!pclose(f)) packageMap.insert(pkg_pair("flatpak", count - 1));
+    } else if (int count = countLinesCmd("flatpak list 2> /dev/null")) {
+        packageMap.insert(pkg_pair("flatpak", count - 1));
     }
     #endif
 
     #ifdef __linux__
-    if((f = popen("apk info 2> /dev/null", "r"))) {
-        int count = countLines(f);
-        if (!pclose(f)) packageMap.insert(pkg_pair("apk", count));
+    if (int count = countLinesCmd("apk info 2> /dev/null")) {
+        packageMap.insert(pkg_pair("apk", count));
     }
     #endif
 
-    if((f = fopen(HOMEBREW_BINARY, "r"))) {
-       fclose(f);
-       struct dirent *files;
-       int brewPkgs = 0;
+    if (fs::exists(HOMEBREW_BINARY)) {
        DWrap brew(HOMEBREW_CELLAR);
-       while ((files = readdir(brew)) != NULL) {
-           brewPkgs++;
-       }
+       int brewPkgs = countFiles(brew) - 3;
        if (brewPkgs != 0) {
-           brewPkgs -= 3;
            packageMap.insert(pkg_pair("homebrew", brewPkgs));
        }
     }

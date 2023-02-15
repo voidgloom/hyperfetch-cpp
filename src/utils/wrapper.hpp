@@ -77,7 +77,7 @@ class FWrap {
 			#ifdef DEBUG_WRAPPERS
 				printf("fwrap destruct\n");
 			#endif
-			fclose(f);
+			if (f) fclose(f);
 		}
 
 		__attribute((always_inline)) operator FILE*() {
