@@ -41,7 +41,7 @@ int main() {
   if (infoChar != NULL) {
     info = infoChar;
   } else {
-    info = "title distro kernel shell model uptime wm de pkgs cpu gpu mem disk terminal";
+    info = "title distro kernel shell model uptime wm de pkgs cpu gpu terminal mem_bar disk_bar";
   }
 
   std::list<HyperfetchModule> module_list;
@@ -121,17 +121,17 @@ int main() {
       module_list.push_back(module);
     } else if (word == "de") {
       DeModule module;
-      if (longestPrefix < 6) longestPrefix = 6;
+      if (longestPrefix < 2) longestPrefix = 2;
       module.fetch();
       module_list.push_back(module);
     } else if (word == "gpu") {
       GpuModule module;
-      if (longestPrefix < 6) longestPrefix = 6;
+      if (longestPrefix < 3) longestPrefix = 3;
       module.fetch();
       module_list.push_back(module);
     } else if (word == "terminal") {
       TerminalModule module;
-      if (longestPrefix < 6) longestPrefix = 6;
+      if (longestPrefix < 8) longestPrefix = 8;
       module.fetch();
       module_list.push_back(module);
     } 

@@ -52,6 +52,6 @@ void RamModule::fetch(bool bar) {
         content = std::to_string(ncbrcUsedMem) + "M / " + std::to_string(totalMemNum) + "M";
     } else {
         double memPercent = (double) ncbrcUsedMem / (double) totalMemNum * 100.0;
-        content = ralsei::bar(15, lround(memPercent));
+        content = "( " + ralsei::bar(15, lround(memPercent)) + ")";
     }
 }
