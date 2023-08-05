@@ -7,9 +7,16 @@
 #include <cstring>
 #include <list>
 #include "utils/wrapper.hpp"
+#include "utils/fs.hpp"
 #include "wmList.hpp"
 
 void WmModule::fetch() {
+    prefix = "WM";
+    // Check if we are running under WSL (i.e. Windows)
+    if (fs::exists("/mnt/wsl")) {
+        content = "DWM.exe";
+        return;
+    }
     content = "unknown";
     uid_t currentUserId = geteuid();
     struct dirent *files;
@@ -52,5 +59,5 @@ void WmModule::fetch() {
         }
     }
 
-    prefix = "WM";
+    
 }

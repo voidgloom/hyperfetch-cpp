@@ -7,8 +7,16 @@
 #include <list>
 #include "deList.hpp"
 #include "utils/wrapper.hpp"
+#include "utils/fs.hpp"
 
 void DeModule::fetch() {
+    prefix = "DE";
+    // Check if we are running under WSL
+    // NOTE: Most Windows machines won't be running something like Cairo Desktop so we just assume the DE is explorer
+    if (fs::exists("/mnt/wsl")) {
+        content = "Windows Explorer";
+        return;
+    }
     uid_t currentUserId = geteuid();
     struct dirent *files;
     content = "unknown";
@@ -51,5 +59,5 @@ void DeModule::fetch() {
         }
     }
     
-    prefix = "DE";
+    
 }
