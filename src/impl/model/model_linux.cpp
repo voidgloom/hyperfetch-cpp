@@ -7,7 +7,12 @@ void ModelModule::fetch() {
   FWrap f("/sys/devices/virtual/dmi/id/product_name", "r");
   if (!f.f) {
     uses_devicetree = true;
-    f.f = fopen("/sys/firmware/devicetree/base/model", "r");
+    f = fopen("/sys/firmware/devicetree/base/model", "r");
+  }
+  if (!f.f) {
+    prefix = "Device";
+    content = "unknown";
+    return;
   }
   fseek(f, 0, SEEK_END);
   size_t f_size = ftell(f);
