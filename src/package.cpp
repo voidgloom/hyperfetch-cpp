@@ -27,6 +27,7 @@ int countLines(FILE *f) {
 }
 
 int countFiles(DIR *dir) {
+    if (!dir) return 0;
     int count = 0;
     struct dirent *files;
     while ((files = readdir(dir))) {
@@ -36,7 +37,7 @@ int countFiles(DIR *dir) {
 }
 
 int countLinesCmd(const char *cmd) {
-    FILE *f;
+    FILE *f; 
     if ((f = popen(cmd, "r"))) {
         int count = countLines(f);
         if (!pclose(f)) return count;
