@@ -1,5 +1,6 @@
 #include "osrelease.hpp"
 #include "wrapper.hpp"
+#include "utils.hpp"
 #include <cstring>
 #include <filesystem>
 #include <iostream>
@@ -15,10 +16,12 @@ OSReleaseParser::OSReleaseParser() {
     if (!f.f)
        f.f = fopen("/etc/os-release", "r");
 
-    Wrap<char *> currentLine(4096);
+
+    auto file_size = file::get_file_size(f);
+    Wrap<char *> currentLine(file_size);
     char *token;
 
-    while (fgets(currentLine, 4096, f) != NULL) {
+    while (fgets(currentLine, file_size, f) != NULL) {
         // key
         token = strtok(currentLine, "=");
         std::string key = token;
