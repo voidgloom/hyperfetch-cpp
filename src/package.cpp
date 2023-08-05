@@ -1,8 +1,8 @@
 #include <string>
 #include "package.hpp"
 #include "utils/wrapper.hpp"
+#include "utils/fs.hpp"
 #include <dirent.h>
-// #include <string.h>
 #include <unistd.h>
 #include <map>
 
@@ -44,13 +44,6 @@ int countLinesCmd(const char *cmd) {
     return 0;
 }
 
-// macOS < 10.15 does not implement std::filesystem
-namespace fs {
-    bool exists(const char* filename) {
-        FWrap f(filename, "r");
-        return f.f;
-    }
-}
 /* </Helper functions> */
 
 void PackageModule::fetch() {

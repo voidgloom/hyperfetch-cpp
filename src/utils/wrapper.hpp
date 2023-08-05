@@ -1,4 +1,5 @@
 // #define DEBUG_WRAPPERS
+#include <stdlib.h>
 
 /**
  * Wrapper class around a C object allocated with malloc
