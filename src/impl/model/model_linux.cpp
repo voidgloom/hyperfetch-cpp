@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <cstring>
+#include "iostream"
 #include "utils/wrapper.hpp"
+#include "utils/utils.hpp"
 
 void ModelModule::fetch() {
   bool uses_devicetree = false;
@@ -14,12 +16,9 @@ void ModelModule::fetch() {
     content = "unknown";
     return;
   }
-  fseek(f, 0, SEEK_END);
-  size_t f_size = ftell(f);
 
+  size_t f_size = file::get_file_size(f);
   Wrap<char *> product_name(f_size);
-
-  rewind(f);
   fgets(product_name, f_size, f);
 
   std::string finalValue = "";
@@ -36,13 +35,10 @@ void ModelModule::fetch() {
   
   if (!uses_devicetree) {
     FWrap ver("/sys/devices/virtual/dmi/id/product_version", "r");
-    fseek(ver, 0, SEEK_END);
-    f_size = ftell(ver);
-
+   
+    f_size = file::get_file_size(ver);
     Wrap<char *> product_version(f_size);
-
-    rewind(f);
-    fgets(product_version, f_size, f);
+    fgets(product_version, f_size, ver);
 
     // add a space
     finalValue += " ";
