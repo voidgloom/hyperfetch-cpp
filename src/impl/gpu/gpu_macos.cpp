@@ -1,4 +1,6 @@
 #include <sys/sysctl.h>
+#include "utils/wrapper.hpp"
+
 
 void GpuModule::fetch() {
     #ifdef __aarch64__
