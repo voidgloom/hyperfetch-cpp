@@ -7,8 +7,7 @@ const std::map<std::string, std::string> wmList = {
                     {"openbox", "openbox"},
                     {"gnome-shell", "Mutter"},
                     {"kwin_x11", "KWin (X11)"},
-                    // kwin_wayland doesn't work properly
-                    {"kwin_wayland_wrapper", "KWin (Wayland)"},
+                    {"kwin_wayland", "KWin (Wayland)"},
                     {"dwm", "dwm"},
                     {"sowm", "sowm"},
                     {"dwl", "dwl"},
