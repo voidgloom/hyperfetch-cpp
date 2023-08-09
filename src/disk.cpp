@@ -1,21 +1,32 @@
 #include "disk.hpp"
 #include "utils/bar.hpp"
-#include <sys/statvfs.h>
+#ifndef _WIN32
+    #include <sys/statvfs.h>
+#endif
 #include <cmath>
+#include <cstdint>
+#ifdef _WIN32
+    #include <fileapi.h>
+#endif
+
 
 void DiskModule::fetch(bool bar) {
-    struct statvfs stat;
-    if (!statvfs("/", &stat)) {
-        double available = stat.f_bfree * stat.f_frsize;
-        double total = stat.f_blocks * stat.f_frsize;
-        if (!bar) {
-            content = std::to_string(lround((total - available) / (1024*1024*1024))) + "G / " + std::to_string(lround(total / (1024 * 1024 * 1024))) + "G (" + std::to_string(lround(((total - available) / total) * 100)) + "%)";
-        } else {
-            content = "( " + ralsei::bar(15, lround(((total - available) / total) * 100)) + ")";
-        }
+    uint64_t free_bytes = 0;
+    uint64_t total_bytes = 0;
+    #ifdef _WIN32
+        GetDiskFreeSpaceExA("C:\\", nullptr, (PULARGE_INTEGER) &total_bytes, (PULARGE_INTEGER) &free_bytes);
+    #else
+        struct statvfs stat;
+        statvfs("/", &stat);
+        free_bytes = stat.f_bfree * stat.f_frsize;
+        total_bytes = stat.f_blocks * stat.f_frsize;
+    #endif
+    double available = free_bytes;
+    double total = total_bytes;
+    if (!bar) {
+        content = std::to_string(lround((total - available) / (1024*1024*1024))) + "G / " + std::to_string(lround(total / (1024 * 1024 * 1024))) + "G (" + std::to_string(lround(((total - available) / total) * 100)) + "%)";
     } else {
-        content = "unknown";
+        content = "( " + ralsei::bar(15, lround(((total - available) / total) * 100)) + ")";
     }
     prefix = "Disk (/)";
-
 }

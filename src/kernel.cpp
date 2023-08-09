@@ -1,10 +1,9 @@
-#include "module.hpp"
 #include "kernel.hpp"
-#include <sys/utsname.h>
 
-void KernelModule::fetch() {
-      utsname unameResult;
-      uname(&unameResult);
-      content = unameResult.release;
-      prefix = "Kernel";
-}
+#if defined(__linux__)
+    #include "impl/kernel/kernel_posix.cpp"
+#elif defined(__APPLE__)
+    #include "impl/kernel/kernel_posix.cpp"
+#elif defined(_WIN32)
+    #include "impl/kernel/kernel_win32.cpp"
+#endif

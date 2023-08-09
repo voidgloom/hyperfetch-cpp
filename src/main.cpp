@@ -17,12 +17,20 @@
 #include "de.hpp"
 #include "gpu.hpp"
 #include "terminal.hpp"
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 int asciiWidth;
 int longestPrefix;
 std::string prefixMode;
 
 int main() {
+  #ifdef _WIN32
+  // Windows expect ASCII by default, so you have to set stdout to accept UTF-8
+  SetConsoleOutputCP(CP_UTF8);
+  #endif
+
   const char* infoChar = std::getenv("HF_INFO");
   std::string info;
 

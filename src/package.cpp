@@ -48,8 +48,11 @@ int countLinesCmd(const char *cmd) {
 /* </Helper functions> */
 
 void PackageModule::fetch() {
+    #ifdef _WIN32
+    prefix = "Packages";
+    return;
+    #endif
     std::map<std::string, int> packageMap;
-    
     if (fs::exists("/usr/bin/pacman")) {
        DWrap pacman("/var/lib/pacman/local");
        int pacmanPkgs = countFiles(pacman) - 3;

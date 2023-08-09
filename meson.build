@@ -1,5 +1,10 @@
 project('hyperfetch', 'cpp')
-dependencies = []
+if host_machine.system() == 'windows'
+    dependencies = []
+    add_global_arguments('-lws2_32', language : 'c')
+else
+    dependencies = []
+endif
 
 incdir = include_directories('src')
 

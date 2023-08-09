@@ -25,7 +25,7 @@ class Wrap {
 				printf("wrap construct\n");
 			#endif
 			o = (T) malloc(size);
-			bzero(o, size);
+			memset(o, 0, size);
 		}
 
 		__attribute((always_inline)) ~Wrap() {

@@ -2,6 +2,10 @@
 
 #ifdef __linux__
     #include "impl/cpu/cpu_linux.cpp"
-#elifdef __APPLE__
+#endif
+#ifdef __APPLE__
     #include "impl/cpu/cpu_macos.cpp"
+#endif
+#ifdef _WIN32
+    #include "impl/cpu/cpu_win32.cpp"
 #endif
