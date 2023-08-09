@@ -1,6 +1,11 @@
 // #define DEBUG_WRAPPERS
 #include <stdlib.h>
 
+#ifdef _MSC_VER
+	#define Inline
+#else 
+	#define Inline __attribute((always_inline))
+#endif
 /**
  * Wrapper class around a C object allocated with malloc
  */
@@ -13,14 +18,14 @@ class Wrap {
 		 * Creates a wrapper object around a pointer that points to memory allocated by malloc()
 		 * @param alloc A pointer pointing to memory allocated by malloc 
 		 */
-		__attribute((always_inline)) Wrap(void *alloc) {
+		Inline Wrap(void *alloc) {
 			#ifdef DEBUG_WRAPPERS
 				printf("wrap construct\n");
 			#endif
 			o = (T) alloc;
 		}
 
-		__attribute((always_inline)) Wrap(int size) {
+		Inline Wrap(int size) {
 			#ifdef DEBUG_WRAPPERS
 				printf("wrap construct\n");
 			#endif
@@ -28,14 +33,14 @@ class Wrap {
 			memset(o, 0, size);
 		}
 
-		__attribute((always_inline)) ~Wrap() {
+		Inline ~Wrap() {
 			#ifdef DEBUG_WRAPPERS
 				printf("wrap destruct\n");
 			#endif
 			free(o);
 		}
 
-		__attribute((always_inline)) operator T() {
+		Inline operator T() {
 			return o;
 		}
 
@@ -55,7 +60,7 @@ class FWrap {
 		 * @param path Path to a file
 		 * @param mode Mode to open the file in
 		 */
-		__attribute((always_inline)) FWrap(const char *path, const char *mode) {
+		Inline FWrap(const char *path, const char *mode) {
 			#ifdef DEBUG_WRAPPERS
 				printf("fwrap construct\n");
 			#endif
@@ -67,30 +72,34 @@ class FWrap {
 		 * out of scope
 		 * @param handle A C file handle
 		 */
-		__attribute((always_inline)) FWrap(FILE *handle) {
+		Inline FWrap(FILE *handle) {
 			#ifdef DEBUG_WRAPPERS
 				printf("fwrap construct\n");
 			#endif
 			f = handle;
 		}
 
-		__attribute((always_inline)) ~FWrap() {
+		Inline ~FWrap() {
 			#ifdef DEBUG_WRAPPERS
 				printf("fwrap destruct\n");
 			#endif
 			if (f) fclose(f);
 		}
 
-		__attribute((always_inline)) operator FILE*() {
+		Inline operator FILE*() {
 			return f;
 		}
 };
 
-#include <dirent.h>
+#ifndef _MSC_VER
+	#include <dirent.h>
+#endif
 
 /**
  * Wrapper class around a C directory handle
  */
+
+typedef void DIR;
 class DWrap {
 	public:
 		DIR *d;
@@ -98,21 +107,27 @@ class DWrap {
 		 * Creates a wrapper around a C directory handle
 		 * @param path Path to a directory
 		 */
-		__attribute((always_inline)) DWrap(const char *path) {
+		Inline DWrap(const char *path) {
 			#ifdef DEBUG_WRAPPERS
 				printf("dwrap construct\n");
 			#endif
-			d = opendir(path);
+			#ifndef _MSC_VER
+				d = opendir(path);
+			#endif
+			return;
 		}
 
 		 ~DWrap() {
 			#ifdef DEBUG_WRAPPERS
 				printf("dwrap destruct\n");
 			#endif
-			closedir(d);
+			#ifndef _MSC_VER
+				closedir(d);
+			#endif
+			return;
 		}
 
-		__attribute((always_inline)) operator DIR*() const {
+		Inline operator DIR*() const {
 			return d;
 		}
 };

@@ -2,9 +2,16 @@
 #include "package.hpp"
 #include "utils/wrapper.hpp"
 #include "utils/fs.hpp"
+#ifndef _MSC_VER
 #include <dirent.h>
-#include <unistd.h>
+#endif
 #include <map>
+
+#ifdef _MSC_VER
+    #define popen _popen
+    #define pclose _pclose
+    typedef void DIR;
+#endif
 
 #ifdef __aarch64__
     #define HOMEBREW_CELLAR "/opt/homebrew/Cellar"
@@ -15,6 +22,8 @@
 #endif
 
 #define pkg_pair std::pair<std::string, int>
+
+
 
 /* <Helper functions> */
 int countLines(FILE *f) {
@@ -29,10 +38,12 @@ int countLines(FILE *f) {
 int countFiles(DIR *dir) {
     if (!dir) return 0;
     int count = 0;
-    struct dirent *files;
-    while ((files = readdir(dir))) {
-        count++;
-    }
+    #ifndef _MSC_VER
+        struct dirent *files;
+        while ((files = readdir(dir))) {
+            count++;
+        }
+    #endif
     return count;
 }
 

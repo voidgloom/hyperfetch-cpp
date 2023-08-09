@@ -2,6 +2,10 @@
 #include <windows.h>
 #include "utils/wrapper.hpp"
 #include <iostream>
+#ifdef _MSC_VER
+    #define popen _popen
+    #define pclose _pclose
+#endif
 
 std::string OsInfo::getOsName() {
     FILE *f;

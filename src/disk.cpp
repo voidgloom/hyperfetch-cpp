@@ -6,7 +6,7 @@
 #include <cmath>
 #include <cstdint>
 #ifdef _WIN32
-    #include <fileapi.h>
+    #include <windows.h>
 #endif
 
 

@@ -2,7 +2,9 @@
 #include "osinfo.hpp"
 #include <cstring>
 #include <iostream>
-#include <unistd.h>
+#ifdef _MSC_VER
+    #include <windows.h>
+#endif
 
 /*
 * ASCII art either official, from neofetch or from pfetch
@@ -57,7 +59,7 @@ void AsciiArt::print() {
                  "*`                            `*\033[0m";
             width = 34;
             height = 14;
-            write(0, logo, strlen(logo));
+            fwrite(logo, strlen(logo), 1, stdout);
         } else {
             const char *logo =
                "\033[38;5;6m       /\\\n"
@@ -69,7 +71,7 @@ void AsciiArt::print() {
 			 " /_-''    ''-_\\\033[0m";
             width = 16;
             height = 7;
-            write(0, logo, strlen(logo));
+            fwrite(logo, strlen(logo), 1, stdout);
         }
     } else if (asciiLogo == "bedrock") {
         std::string asciiFormat;
@@ -94,7 +96,7 @@ void AsciiArt::print() {
 
             width = 40;
             height = 17;
-            write(0, logo, strlen(logo));
+            fwrite(logo, strlen(logo), 1, stdout);
     } else {
         width = -1;
         height = -1;
