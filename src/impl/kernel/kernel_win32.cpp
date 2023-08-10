@@ -5,7 +5,7 @@
 void KernelModule::fetch() {
     Wrap<LPOSVERSIONINFOA> verInfo(1024);
     GetVersionExA(verInfo);
-    content += verInfo.o->dwMajorVersion;
-    content += verInfo.o->dwMinorVersion;
+    content += verInfo->dwMajorVersion;
+    content += verInfo->dwMinorVersion;
     prefix = "Kernel";
 }

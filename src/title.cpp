@@ -6,11 +6,12 @@
 // #include <winsock.h>
 #endif
 #include "utils/wrapper.hpp"
+#include "utils/utils.hpp"
 
 
 void TitleModule::fetch() {
   #ifndef _WIN32
-    std::string username = std::getenv("USER");
+    std::string username = util::getenv("USER");
   #else 
     Wrap<char *> username(1024);
     Wrap<char *> hostname(1024);
@@ -21,19 +22,15 @@ void TitleModule::fetch() {
  //   gethostname(hostname, 1024);  
   #endif
 
-  char *titleFormat = std::getenv("HF_TITLE_FORMAT");
-  std::string titleFormatString;
-  if (titleFormat != NULL)
-    titleFormatString = titleFormat;
-  else
-    titleFormatString = "\033[1;38;5;5;4m";
+  auto titleFormat = util::getenv("HF_TITLE_FORMAT");
+  if (titleFormat == "") titleFormat = "\033[1;38;5;5;4m";
 
   noSeperator = true;
   #ifndef _WIN32
     utsname unameResult;
     uname(&unameResult);
-    content = titleFormatString + username + "\033[0m" + "@" + titleFormatString + unameResult.nodename + "\033[0m";
+    content = titleFormat + username + "\033[0m" + "@" + titleFormat + unameResult.nodename + "\033[0m";
   #else 
-    content = titleFormatString + username.o + "\033[0m" + "@" + titleFormatString + "hostname.o" + "\033[0m";
+    content = titleFormat + username.o + "\033[0m" + "@" + titleFormat + "hostname.o" + "\033[0m";
   #endif
 }

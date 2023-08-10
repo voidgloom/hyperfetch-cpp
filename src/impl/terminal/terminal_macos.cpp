@@ -1,4 +1,6 @@
+#include "utils/utils.hpp"
+
 void TerminalModule::fetch() {
     prefix = "Terminal";
-    content = std::getenv("TERM_PROGRAM");
+    content = util::getenv("TERM_PROGRAM");
 }

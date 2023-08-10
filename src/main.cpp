@@ -17,6 +17,7 @@
 #include "de.hpp"
 #include "gpu.hpp"
 #include "terminal.hpp"
+#include "utils/utils.hpp"
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -25,34 +26,30 @@ int asciiWidth;
 int longestPrefix;
 std::string prefixMode;
 
+#define Module(klass, prefixLength) klass module; if (longestPrefix < prefixLength) longestPrefix = prefixLength; module.fetch(); module_list.push_back(module)
+
 int main() {
   #ifdef _WIN32
-  // Windows expect ASCII by default, so you have to set stdout to accept UTF-8
-  SetConsoleOutputCP(CP_UTF8);
+    // Windows expects ASCII by default, so you have to set stdout to accept UTF-8
+    SetConsoleOutputCP(CP_UTF8);
   #endif
 
-  const char* infoChar = std::getenv("HF_INFO");
-  std::string info;
-
-  const char* prefixModeChar = std::getenv("HF_PREFIX_STYLE");
-  if (prefixModeChar != NULL) {
-    prefixMode = prefixModeChar;
-  }
+  prefixMode = util::getenv("HF_PREFIX_STYLE");
 
   AsciiArt ascii;
   ascii.print();
 
   asciiWidth = ascii.width;
   // return to top
-  std::cout << "\033[" << ascii.height << "A" << "\033[" << ascii.width << "D";
-
-  if (infoChar != NULL) {
-    info = infoChar;
-  } else {
-    info = "title distro kernel shell model uptime wm de pkgs cpu gpu terminal mem_bar disk_bar";
-  }
+  std::cout << "\033[" << ascii.height << "A\033[" << ascii.width << "D";
 
   std::list<HyperfetchModule> module_list;
+
+  std::string info = util::getenv("HF_INFO");
+
+  if (info == "") {
+    info = "title distro kernel shell model uptime wm de pkgs cpu gpu terminal mem_bar disk_bar";
+  }
 
   std::string word;
   std::string newWord;
@@ -63,50 +60,23 @@ int main() {
     if (word != newWord) {
     word = newWord;
     if (word == "title") {
-      TitleModule module;
-      if (longestPrefix < 0) longestPrefix = 0;
-      module.fetch();
-      module_list.push_back(module);
+      Module(TitleModule, 0);
     } else if (word == "kernel") {
-      KernelModule module;
-      if (longestPrefix < 6) longestPrefix = 6;
-      module.fetch();
-      module_list.push_back(module);
+      Module(KernelModule, 6);
     } else if (word == "shell") {
-      ShellModule module;
-      if (longestPrefix < 5) longestPrefix = 5;
-      module.fetch();
-      module_list.push_back(module);
+      Module(ShellModule, 5);
     } else if (word == "model") {
-      ModelModule module;
-      if (longestPrefix < 5) longestPrefix = 5;
-      module.fetch();
-      module_list.push_back(module);
+      Module(ModelModule, 5);
     } else if (word == "distro") {
-      DistroModule module;
-      if (longestPrefix < 2) longestPrefix = 2;
-      module.fetch();
-      module_list.push_back(module);
+      Module(DistroModule, 2);
     } else if (word == "uptime") {
-      UptimeModule module;
-      if (longestPrefix < 6) longestPrefix = 6;
-      module.fetch();
-      module_list.push_back(module);
+      Module(UptimeModule, 6);
     } else if (word == "wm") {
-      WmModule module;
-      if (longestPrefix < 2) longestPrefix = 2;
-      module.fetch();
-      module_list.push_back(module);
+      Module(WmModule, 2);
     } else if (word == "pkgs") {
-      PackageModule module;
-      if (longestPrefix < 4) longestPrefix = 4;
-      module.fetch();
-      module_list.push_back(module);
+      Module(PackageModule, 4);
     } else if (word == "cpu") {
-      CpuModule module;
-      if (longestPrefix < 3) longestPrefix = 3;
-      module.fetch();
-      module_list.push_back(module);
+      Module(CpuModule, 3);
     } else if (word == "mem") {
       RamModule module;
       if (longestPrefix < 6) longestPrefix = 6;
@@ -128,22 +98,12 @@ int main() {
       module.fetch(true);
       module_list.push_back(module);
     } else if (word == "de") {
-      DeModule module;
-      if (longestPrefix < 2) longestPrefix = 2;
-      module.fetch();
-      module_list.push_back(module);
+      Module(DeModule, 2);
     } else if (word == "gpu") {
-      GpuModule module;
-      if (longestPrefix < 3) longestPrefix = 3;
-      module.fetch();
-      module_list.push_back(module);
+      Module(GpuModule, 3);
     } else if (word == "terminal") {
-      TerminalModule module;
-      if (longestPrefix < 8) longestPrefix = 8;
-      module.fetch();
-      module_list.push_back(module);
+      Module(TerminalModule, 8);
     } 
-
     }
   }
 
@@ -153,16 +113,12 @@ int main() {
     info_amount++;
   }
   
-  char *show_color_char = std::getenv("HF_SHOW_COLORS");
-  std::string show_color = "";
-  if (show_color_char) 
-    show_color = show_color_char;
-  
+  std::string show_color = util::getenv("HF_SHOW_COLORS");
 
   if (show_color != "0") {
     std::cout << "\n\033[" << asciiWidth << "C" 
               << "\033[48;5;0m   \033[48;5;1m   \033[48;5;2m   \033[48;5;3m   \033[48;5;4m   \033[48;5;5m   \033[48;5;6m   \033[48;5;7m   \033[0m\n"
-    << "\033[" << asciiWidth << "C" << "\033[48;5;8m   \033[48;5;9m   \033[48;5;10m   \033[48;5;11m   \033[48;5;12m   \033[48;5;13m   \033[48;5;14m   \033[48;5;15m   \033[0m"
+    << "\033[" << asciiWidth << "C\033[48;5;8m   \033[48;5;9m   \033[48;5;10m   \033[48;5;11m   \033[48;5;12m   \033[48;5;13m   \033[48;5;14m   \033[48;5;15m   \033[0m"
     << std::endl;
   }
 

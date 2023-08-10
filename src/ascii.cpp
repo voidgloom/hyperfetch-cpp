@@ -1,5 +1,6 @@
 #include "ascii.hpp"
 #include "osinfo.hpp"
+#include "utils/utils.hpp"
 #include <cstring>
 #include <iostream>
 #ifdef _MSC_VER
@@ -11,36 +12,24 @@
 */
 
 void AsciiArt::print() {
-    const char *printAscii = std::getenv("HF_ASCII");
-    std::string pAscii = "";
-    if (printAscii != NULL) {
-        pAscii = printAscii;
-    }
+    auto printAscii = util::getenv("HF_ASCII");
 
-    if (pAscii == "0") {
+    if (printAscii == "0") {
         width = -1;
         height = -1;
         return;
     }
 
-    const char *smallLogo = std::getenv("HF_SMALL_LOGO");
-        std::string smallLogoStr;
-        if (smallLogo != NULL)
-            smallLogoStr = smallLogo;
-        else
-            smallLogoStr = "";
+    auto smallLogo = util::getenv("HF_SMALL_LOGO");
 
-    std::string asciiLogo = "";
-    const char *asciiArtEnv = std::getenv("HF_ASCII_LOGO");
-    if (asciiArtEnv != NULL) {
-        asciiLogo = asciiArtEnv;
-    } else {
+    auto asciiLogo = util::getenv("HF_ASCII_LOGO");
+    if (asciiLogo == "") {
          OsInfo info;
          asciiLogo = info.getOsType();
     }
 
     if (asciiLogo == "arch" || asciiLogo == "archarm") {
-        if (smallLogoStr != "1") {
+        if (smallLogo != "1") {
             const char *logo =
                  "\033[38;5;6m               -@\n"
                  "              .##@\n"
@@ -74,7 +63,6 @@ void AsciiArt::print() {
             fwrite(logo, strlen(logo), 1, stdout);
         }
     } else if (asciiLogo == "bedrock") {
-        std::string asciiFormat;
         const char *logo =
                 "\033[38;5;0m--------------------------------------\n\
 --------------------------------------\n\

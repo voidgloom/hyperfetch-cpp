@@ -1,17 +1,15 @@
 #include "module.hpp"
 #include <iostream>
+#include "utils/utils.hpp"
 
 extern int asciiWidth;
 extern int longestPrefix;
 extern std::string prefixMode;
 
 void HyperfetchModule::print() {
-  std::string prefixFormat;
-  const char *prefixFormatEnv = std::getenv("HF_PREFIX_FORMAT");
-  if (prefixFormatEnv != NULL)
-    prefixFormat = prefixFormatEnv;
-  else
-    prefixFormat = "\033[1;38;5;5m";
+  auto prefixFormat = util::getenv("HF_PREFIX_FORMAT");
+  if (prefixFormat == "") prefixFormat = "\033[1;38;5;5m";
+  
   std::string seperator;
   if(noSeperator || prefixMode == "pfetch")
     seperator = "";

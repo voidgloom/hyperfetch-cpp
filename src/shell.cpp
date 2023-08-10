@@ -1,17 +1,19 @@
 #include "shell.hpp"
+#include "utils/utils.hpp"
 #include <cstring>
+#include <sstream>
+#include <vector>
 
 void ShellModule::fetch() {
-  // char* shellEnv = std::getenv("SHELL");
-  char* shellEnv = "unknown";
-  // basename
-  auto *token = strtok(shellEnv, "/");
-  std::string oldToken;
-  while (token != NULL) {
-    oldToken = token;
-    token = strtok(NULL, "/");
+  auto shellEnv = util::getenv("SHELL");
+  std::vector<std::string> tokens;
+  std::string temp;
+
+  std::stringstream stream(shellEnv);
+  while (std::getline(stream, temp, '/')) {
+    ;
   }
 
-  content = oldToken;
+  content = temp;
   prefix = "Shell";
 }
