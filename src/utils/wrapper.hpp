@@ -3,6 +3,7 @@
 
 #ifdef _MSC_VER
 	#define Inline
+	typedef void DIR;
 #else 
 	#define Inline __attribute((always_inline))
 #endif
@@ -41,6 +42,10 @@ class Wrap {
 		}
 
 		Inline operator T() {
+			return o;
+		}
+
+		Inline T operator ->() {
 			return o;
 		}
 
@@ -99,7 +104,7 @@ class FWrap {
  * Wrapper class around a C directory handle
  */
 
-typedef void DIR;
+
 class DWrap {
 	public:
 		DIR *d;
